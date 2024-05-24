@@ -1,9 +1,9 @@
 <template>
   <nav class="navbar">
     <i class="bx bx-menu" id="sidebarOpen"></i>
-    <div>
+    <!-- <div>
       <img src="../assets/logo.png" alt="Logo" style="width: 8rem" />
-    </div>
+    </div> -->
 
     <div class="navbar_content">
       <img src="" alt="profile" class="profile" />

@@ -4,39 +4,45 @@
   <div class="page">
     <div class="px-4 py-2">
       <form :action="formAction" method="GET" @submit.prevent="submitForm">
-        <h1 class="text-3xl py-2">Search by</h1>
-        <label>
+        <h1 class="text-3xl py-2 font-bold">Search by</h1>
+        <div class="flex items-center">
+          <label class="mr-4">
+            <input
+              type="radio"
+              v-model="searchOption"
+              value="ref"
+              name="searchOption"
+              class="form-radio"
+            />
+            <span class="ml-2">Ref</span>
+          </label>
+          <label>
+            <input
+              type="radio"
+              v-model="searchOption"
+              value="desc"
+              name="searchOption"
+              class="form-radio"
+            />
+            <span class="ml-2">Description</span>
+          </label>
+        </div>
+        <div class="flex w-full">
           <input
-            type="radio"
-            v-model="searchOption"
-            value="ref"
-            name="searchOption"
+            type="text"
+            placeholder="Search Product..."
+            v-model="searchQuery"
+            class="px-4 py-2 w-full border border-gray-200 rounded-md"
           />
-          Ref
-        </label>
-        <label>
-          <input
-            type="radio"
-            v-model="searchOption"
-            value="desc"
-            name="searchOption"
-          />
-          Description
-        </label>
-        <br />
-        <input
-          type="text"
-          placeholder="Search Product..."
-          v-model="searchQuery"
-          class="px-4 py-2"
-          style="margin-top: 0.8rem; width: 30rem; margin-right: 0.5rem"
-        />
-        <input type="submit" value="Search" class="btn py-2 px-4" />
+          <button type="submit" class="bg-green-600 text-white font-bold px-4 py-2 rounded-r-lg">
+            Search
+          </button>
+        </div>
       </form>
       <br />
-      <table>
+      <table class="min-w-full border border-gray-200 rounded-md overflow-hidden">
         <thead>
-          <tr class="bg-gray-200">
+          <tr class="bg-green-600 text-white">
             <th class="px-4 py-2">ID</th>
             <th class="px-4 py-2">Ref</th>
             <th class="px-4 py-2">Material</th>
@@ -53,7 +59,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="row in data" :key="row.id" class="border-gray-200">
+          <tr v-for="row in data" :key="row.id" class="border-gray-200 hover:bg-gray-100">
             <td class="px-4 py-2" data-label="ID">{{ row.id }}</td>
             <td class="px-4 py-2" data-label="Ref">
               {{ row.ref }}
@@ -94,6 +100,7 @@
       </table>
     </div>
   </div>
+
 </template>
 
 <script setup>

@@ -2,28 +2,28 @@
   <HeaderComponent></HeaderComponent>
   <DrawerComponent></DrawerComponent>
   <div class="page">
-    <div class="px-4 py-2">
-      <div style="display: flex; justify-content: space-between">
+    <div class="px-4">
+      <div class="flex justify-between">
         <div>
-          <h3 class="mt-2 font-medium text-gray-900">
+          <h3 class="mt-2 font-medium text-gray-900 py-2">
             {{ head.tgl }}
           </h3>
           <h1 class="mt-2 text-3xl font-medium text-gray-900">
-            Customer : {{ head.Customer }}
+            Customer: {{ head.Customer }}
           </h1>
-          <h1 class="mt-2 font-medium text-gray-900">
+          <h1 class="mt-2 font-medium text-gray-900 py-2">
             By {{ head.Internal }} from {{ head.Team }}
           </h1>
         </div>
         <div>
-          <button class="px-4 py-2 btn" @click="saveModifiedRows()">
+          <button class="bg-green-600 text-white font-bold px-4 py-2 rounded" @click="saveModifiedRows">
             Save
           </button>
         </div>
       </div>
-      <table>
+      <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden mt-4">
         <thead>
-          <tr class="bg-gray-200">
+          <tr class="bg-green-600 text-white">
             <th class="px-4 py-2">Ref</th>
             <th class="px-4 py-2">Description</th>
             <th class="px-4 py-2">Quantity</th>
@@ -41,7 +41,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="row in data" :key="row.id" class="border-gray-200">
+          <tr v-for="(row, index) in data" :key="row.id" class="border-t border-gray-200 hover:bg-gray-100">
             <td class="px-4 py-2" data-label="Ref">
               {{ row.ref }}
             </td>
@@ -58,13 +58,13 @@
               {{ row.total_price }}
             </td>
             <td data-label="Delivery Time">
-              <input class="px-3 py-2" v-model="row.delivery_time" />
+              <input class="px-3 py-2" v-model="row.delivery_time" @input="markModified(index, 'delivery_time')" />
             </td>
             <td class="px-4 py-2" data-label="Status">
               {{ row.status }}
             </td>
             <td data-label="Remarks">
-              <input class="px-3 py-2" v-model="row.remarks" />
+              <input class="px-3 py-2" v-model="row.remarks" @input="markModified(index, 'remarks')" />
             </td>
             <td class="px-4 py-2" data-label="Standard Discount">
               {{ row.standard_discount }}%
@@ -89,16 +89,19 @@
       </table>
     </div>
   </div>
+
 </template>
+
 <script setup>
 import HeaderComponent from "../components/HeaderComponent";
 import DrawerComponent from "../components/DrawerComponent";
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref } from "vue";
 import { useRoute } from 'vue-router';
 import AuthService from "@/AuthService";
 
 const data = ref([]);
 const head = ref({});
+const modifiedRows = ref([]);
 const route = useRoute();
 
 onMounted(async () => {
@@ -110,61 +113,23 @@ onMounted(async () => {
     console.error("Error fetching data:", error);
   }
 });
-// Track modified rows
-const modifiedRows = ref(new Set());
 
-// Watch for changes in each row
-for (let i = 0; i < data.value.length; i++) {
-  for (const key in data[i]) {
-    if (Object.hasOwnProperty.call(data.value[i], key)) {
-      watch(
-        () => data[i][key],
-        (newValue, oldValue) => {
-          if (!isEqual(newValue, oldValue)) {
-            // Check if the modification already exists in modifiedRows
-            let alreadyModified = false;
-            modifiedRows.value.forEach((item) => {
-              if (item.rowIndex === i && item.columnName === key) {
-                alreadyModified = true;
-              }
-            });
-            // If not already modified, add it to the set
-            if (!alreadyModified) {
-              modifiedRows.value.add({
-                rowIndex: i,
-                columnName: key,
-              });
-            }
-          } else {
-            // Remove entry if value reverts to the original
-            modifiedRows.value.forEach((item) => {
-              if (item.rowIndex === i && item.columnName === key) {
-                modifiedRows.value.delete(item);
-              }
-            });
-          }
-        },
-        { deep: true } // Ensure deep watching for nested properties
-      );
-    }
+const markModified = (rowIndex, fieldName) => {
+  const modifiedEntry = {
+    row: rowIndex,
+    field: fieldName,
+    value: data.value[rowIndex][fieldName]
+  };
+  const existingEntry = modifiedRows.value.find(entry => entry.row === rowIndex && entry.field === fieldName);
+  if (existingEntry) {
+    existingEntry.value = modifiedEntry.value;
+  } else {
+    modifiedRows.value.push(modifiedEntry);
   }
-}
+};
 
-function saveModifiedRows() {
-  for (const modifiedItem of modifiedRows.value) {
-    const { rowIndex, columnName } = modifiedItem;
-    const modifiedRow = data[rowIndex];
-    const modifiedValue = modifiedRow[columnName];
-    console.log(
-      `Row ${rowIndex} - Column ${columnName} modified:`,
-      modifiedValue
-    );
-  }
-  modifiedRows.value.clear();
-}
-
-// Helper function to check object equality
-function isEqual(obj1, obj2) {
-  return JSON.stringify(obj1) === JSON.stringify(obj2);
-}
+const saveModifiedRows = () => {
+  console.log('Modified rows:', modifiedRows.value);
+  // Add your logic to handle the saving of modified rows here.
+};
 </script>

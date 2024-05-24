@@ -1,5 +1,5 @@
 <template>
-  <nav class="sidebar close hoverable">
+  <nav class="sidebar close hoverable shadow">
     <div class="menu_content">
       <ul class="menu_items">
         <!-- duplicate or remove this li tag if you want to add or remove navlink with submenu -->

@@ -9,7 +9,6 @@ use Firebase\JWT\Key;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Inertia\Inertia;
 
 class PenawaranController extends Controller
 {
@@ -31,13 +30,13 @@ class PenawaranController extends Controller
     public function customer()
     {
         //
-        $data = Penawaran::join('internals', 'penawarans.internals_id', '=', 'internals.id')
-            ->join('teams as t', 'penawarans.teams_id', '=', 't.id')
-            ->join('customers as c', 'penawarans.customers_id', '=', 'c.id')
-            ->select("penawarans.tgl", "t.nama as Team", "internals.nama as Internal", "c.nama as Customer", "penawarans.uri as uri")
-            ->where("c.id", "=", Auth::guard('customer')->user()->id)
-            ->get();
-        return inertia::render('customer', ['data' => $data]);
+        // $data = Penawaran::join('internals', 'penawarans.internals_id', '=', 'internals.id')
+        //     ->join('teams as t', 'penawarans.teams_id', '=', 't.id')
+        //     ->join('customers as c', 'penawarans.customers_id', '=', 'c.id')
+        //     ->select("penawarans.tgl", "t.nama as Team", "internals.nama as Internal", "c.nama as Customer", "penawarans.uri as uri")
+        //     ->where("c.id", "=", Auth::guard('customer')->user()->id)
+        //     ->get();
+        // return inertia::render('customer', ['data' => $data]);
     }
 
     /**
@@ -164,7 +163,7 @@ class PenawaranController extends Controller
 
     public function penawaran_baru()
     {
-        $user = Auth::guard('internal')->user();
-        return inertia::render('penawaran_baru', compact('user'));
+        // $user = Auth::guard('internal')->user();
+        // return inertia::render('penawaran_baru', compact('user'));
     }
 }

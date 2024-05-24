@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use DateTime;
+use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
-use Tymon\JWTAuth\Contracts\Providers\JWT;
 
 class CustomerLoginController extends Controller
 {
