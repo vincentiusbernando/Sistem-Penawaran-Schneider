@@ -1,3 +1,8 @@
+<style scoped>
+  table{
+    font-size: 100%;
+  }
+</style>
 <template>
   <HeaderComponent></HeaderComponent>
   <DrawerComponent></DrawerComponent>
@@ -5,13 +10,13 @@
     <div class="px-4 py-2">
       <div class="py-2 justify-between flex">
         <a href="/penawaran_baru">
-          <button class="bg-green-600 text-white font-bold px-4 py-2 rounded">
+          <button class="bg-green-600 text-white font-bold px-4 py-2 rounded shadow-md">
             Buat Penawaran
           </button>
         </a>
         <button
-          class="bg-green-600 text-white font-bold px-4 py-2 rounded items-center flex"
-          @click="fetchData"
+          class="bg-green-600 text-white font-bold px-4 py-2 rounded items-center flex shadow-md"
+          @click="Refresh"
         >
           <i class="bx bx-refresh bigger_icon"></i>
           <p class="ml-2">Refresh</p>
@@ -22,12 +27,12 @@
       >
         <thead>
           <tr class="bg-green-600 text-white">
-            <th class="px-4 py-2 text-left">Date</th>
-            <th class="px-4 py-2 text-left">Team</th>
-            <th class="px-4 py-2 text-left">Internal</th>
-            <th class="px-4 py-2 text-left">Customer</th>
-            <th class="px-4 py-2 text-left">Perusahaan</th>
-            <th class="px-4 py-2 text-left">Detail</th>
+            <th style="width: 5%" class="px-4 py-2 text-left">Date</th>
+            <th style="width: 2%" class="px-4 py-2 text-left">Team</th>
+            <th style="width: 3%" class="px-4 py-2 text-left">Internal</th>
+            <th style="width: 3%" class="px-4 py-2 text-left">Customer</th>
+            <th style="width: 3%" class="px-4 py-2 text-left">Perusahaan</th>
+            <th style="width: 2%" class="px-4 py-2 text-left">Detail</th>
           </tr>
         </thead>
         <tbody>
@@ -58,6 +63,10 @@ import HeaderComponent from "../components/HeaderComponent";
 import DrawerComponent from "../components/DrawerComponent";
 import { ref } from "vue";
 import AuthService from "@/AuthService";
+import { useToast } from "vue-toast-notification";
+import "vue-toast-notification/dist/theme-sugar.css";
+
+const $toast = useToast();
 
 // Define a reactive variable for data
 const data = ref([]);
@@ -71,5 +80,9 @@ const fetchData = async () => {
   }
 };
 
+const Refresh=()=>{
+  fetchData();
+  $toast.success("Refreshed", { position: "top" });
+};
 fetchData();
 </script>

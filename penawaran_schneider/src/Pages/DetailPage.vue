@@ -3,7 +3,6 @@
   <DrawerComponent></DrawerComponent>
   <div class="page">
     <div class="px-4">
-      <div v-if="showMessageBox">{{ txtMessageBox }}</div>
       <div class="flex justify-between py-2 items-center">
         <div class="flex items-center">
           <div
@@ -35,7 +34,7 @@
           <div>
             <button
               class="bg-green-600 text-white font-bold px-4 py-2 rounded items-center flex"
-              @click="fetchData"
+              @click="Refresh"
             >
               <i class="bx bx-refresh bigger_icon"></i>
               <p class="ml-2">Refresh</p>
@@ -57,20 +56,20 @@
       >
         <thead>
           <tr class="bg-green-600 text-white">
-            <th class="px-4 py-2">Ref</th>
-            <th class="px-4 py-2">Description</th>
-            <th class="px-4 py-2">Quantity</th>
-            <th class="px-4 py-2">Unit Price</th>
-            <th class="px-4 py-2">Total Price</th>
-            <th class="px-4 py-2">Delivery Time</th>
-            <th class="px-4 py-2">Status</th>
-            <th class="px-4 py-2">Remarks</th>
-            <th class="px-4 py-2">Standard Discount</th>
-            <th class="px-4 py-2">Additional Discount</th>
-            <th class="px-4 py-2">Cash Discount</th>
-            <th class="px-4 py-2">Coef</th>
-            <th class="px-4 py-2">PL Excel</th>
-            <th class="px-4 py-2">PL After Coef</th>
+            <th style="width: 5%" class="px-4 py-2">Ref</th>
+            <th style="width: 10%" class="px-4 py-2">Description</th>
+            <th style="width: 5%" class="px-4 py-2">Quantity</th>
+            <th style="width: 5%" class="px-4 py-2">Unit Price</th>
+            <th style="width: 5%" class="px-4 py-2">Total Price</th>
+            <th style="width: 5%" class="px-4 py-2">Delivery Time</th>
+            <th style="width: 5%" class="px-4 py-2">Status</th>
+            <th style="width: 7%" class="px-4 py-2">Remarks</th>
+            <th style="width: 5%" class="px-4 py-2">Standard Discount</th>
+            <th style="width: 6%" class="px-4 py-2">Additional Discount</th>
+            <th style="width: 5%" class="px-4 py-2">Cash Discount</th>
+            <th style="width: 4%" class="px-4 py-2">Coef</th>
+            <th style="width: 4%" class="px-4 py-2">PL Excel</th>
+            <th style="width: 4%" class="px-4 py-2">PL After Coef</th>
           </tr>
         </thead>
         <tbody>
@@ -110,10 +109,11 @@
                 <option
                   :value="'On Process'"
                   :selected="row.status === 'On Process'"
+                  class="py-2"
                 >
                   On Process
                 </option>
-                <option :value="'Done'" :selected="row.status === 'Done'">
+                <option :value="'Done'" :selected="row.status === 'Done'" class="py-2">
                   Done
                 </option>
               </select>
@@ -157,13 +157,14 @@ import DrawerComponent from "../components/DrawerComponent";
 import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import AuthService from "@/AuthService";
+import { useToast } from "vue-toast-notification";
+import "vue-toast-notification/dist/theme-sugar.css";
 
+const $toast = useToast();
 const data = ref([]);
 const head = ref({});
 const modifiedRows = ref([]);
 const route = useRoute();
-var showMessageBox = false;
-var txtMessageBox = "";
 
 const fetchData = async () => {
   try {
@@ -177,7 +178,11 @@ const fetchData = async () => {
     console.error("Error fetching data:", error);
   }
 };
-fetchData();
+const Refresh=()=>{
+  fetchData();
+  $toast.success("Refreshed", { position: "top" });
+};
+
 const markModified = (id, rowIndex, fieldName) => {
   const modifiedEntry = {
     row: id,
@@ -215,8 +220,7 @@ async function updatePenawaran(id_penawaran, jsonData) {
   try {
     const response = await AuthService.updatePenawaran(id_penawaran, jsonData);
     console.log(response);
-    showMessageBox = true;
-    txtMessageBox = "Successfully updated";
+    $toast.success("Successfully updated", { position: "top" });
   } catch (error) {
     console.log(error);
   }

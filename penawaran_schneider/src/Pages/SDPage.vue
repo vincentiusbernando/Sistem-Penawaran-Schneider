@@ -1,3 +1,8 @@
+<style scoped>
+  table{
+    font-size: 100%;
+  }
+</style>
 <template>
   <HeaderComponent></HeaderComponent>
   <DrawerComponent></DrawerComponent>

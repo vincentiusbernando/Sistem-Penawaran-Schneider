@@ -1,3 +1,8 @@
+<style scoped>
+  table{
+    font-size: 100%;
+  }
+</style>
 <template>
   <HeaderComponent></HeaderComponent>
   <DrawerComponent></DrawerComponent>
@@ -43,19 +48,19 @@
       <table class="min-w-full rounded-lg overflow-hidden mt-4 bg-white shadow-md">
         <thead>
           <tr class="bg-green-600 text-white">
-            <th class="px-4 py-2">ID</th>
-            <th class="px-4 py-2">Ref</th>
-            <th class="px-4 py-2">Material</th>
-            <th class="px-4 py-2">Description</th>
-            <th class="px-4 py-2">Price</th>
-            <th class="px-4 py-2">BU</th>
-            <th class="px-4 py-2">Activity</th>
-            <th class="px-4 py-2">MPG</th>
-            <th class="px-4 py-2">Type</th>
-            <th class="px-4 py-2">Sub-type</th>
-            <th class="px-4 py-2">Time</th>
-            <th class="px-4 py-2">Activity Detail</th>
-            <th class="px-4 py-2">Stock</th>
+            <th style="width: 2%" class="px-4 py-2">ID</th>
+            <th style="width: 5%" class="px-4 py-2">Ref</th>
+            <th style="width: 5%" class="px-4 py-2">Material</th>
+            <th style="width: 10%" class="px-4 py-2">Description</th>
+            <th style="width: 4%" class="px-4 py-2">Price</th>
+            <th style="width: 3%" class="px-4 py-2">BU</th>
+            <th style="width: 4%" class="px-4 py-2">Activity</th>
+            <th style="width: 3%" class="px-4 py-2">MPG</th>
+            <th style="width: 3%" class="px-4 py-2">Type</th>
+            <th style="width: 4%" class="px-4 py-2">Sub-type</th>
+            <th style="width: 3%" class="px-4 py-2">Time</th>
+            <th style="width: 5%" class="px-4 py-2">Activity Detail</th>
+            <th style="width: 4%" class="px-4 py-2">Stock</th>
           </tr>
         </thead>
         <tbody>

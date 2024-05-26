@@ -1,41 +1,7 @@
-<style>
-.coladdRowBetween {
-  width: 3%;
-}
-.colRef {
-  /* width: 2%; */
-}
-.colDescription {
-  width: 10%;
-}
-.colQuantity {
-  width: 6%;
-}
-.colDeliveryTime {
-}
-.colRemarks {
-  width: 10%;
-}
-.colSD {
-}
-.colAD {
-}
-.colCD {
-}
-.colCoef {
-  width: 5%;
-}
-.colPriceExcel {
-}
-.colPriceAfterCoef {
-}
-.colUnitPrice {
-}
-.colTotalPrice {
-}
-.colAction {
-  width: 6%;
-}
+<style scoped>
+  table{
+    font-size: 80%;
+  }
 </style>
 <template>
   <HeaderComponent></HeaderComponent>
@@ -66,49 +32,41 @@
       </div>
       <div class="text-white py-2 flex justify-end">
         <button
-          class="bg-green-600 text-white font-bold px-3 py-2 rounded"
+          class="bg-green-600 text-white font-bold px-3 py-2 rounded shadow-md"
           @click="addRow"
         >
           Tambah Barang
         </button>
       </div>
-      <div style="position: relative;">
-        <table class="min-w-full rounded-lg mt-4 bg-white shadow-md overflow-hidden">
+      <div style="position: relative">
+        <table
+          class="min-w-full rounded-lg mt-4 bg-white shadow-md overflow-hidden"
+        >
           <thead>
             <tr class="bg-green-600 text-white">
-              <th class="px-3 py-2 coladdRowBetween"></th>
-              <th class="px-3 py-2">Ref</th>
-              <th class="px-3 py-2">Description</th>
-              <th class="px-3 py-2">Quantity</th>
-              <th class="px-3 py-2">
-                Unit <br />
-                Price
+              <th style="width: 5%" class="px-3 py-2"></th>
+              <th style="width: 10%" class="px-3 py-2">Ref</th>
+              <th style="width: 20%" class="px-3 py-2">Description</th>
+              <th style="width: 9%" class="px-3 py-2">Quantity</th>
+              <th style="width: 8%" class="px-3 py-2">Unit <br />Price</th>
+              <th style="width: 8%" class="px-3 py-2">Total<br />Price</th>
+              <th style="width: 8%" class="px-3 py-2">Delivery<br />Time</th>
+              <th style="width: 10%" class="px-3 py-2">Remarks</th>
+              <th style="width: 9%" class="px-3 py-2">
+                Standard <br />Discount <br />(%)
               </th>
-              <th class="px-3 py-2">
-                Total<br />
-                Price
+              <th style="width: 9%" class="px-3 py-2">
+                Additional <br />Discount<br />(%)
               </th>
-              <th class="px-3 py-2">
-                Delivery<br />
-                Time
+              <th style="width: 9%" class="px-3 py-2">
+                Cash <br />Discount<br />(%)
               </th>
-              <th class="px-3 py-2">Remarks</th>
-              <th class="px-3 py-2">Standard <br />Discount <br />(%)</th>
-              <th class="px-3 py-2">
-                Additional <br />Discount<br />
-                (%)
+              <th style="width: 7%" class="px-3 py-2">Coef</th>
+              <th style="width: 8%" class="px-3 py-2">PL <br />Excel</th>
+              <th style="width: 8%" class="px-3 py-2">
+                PL<br />After <br />Coef
               </th>
-              <th class="px-3 py-2">
-                Cash <br />Discount<br />
-                (%)
-              </th>
-              <th class="px-3 py-2">Coef</th>
-              <th class="px-3 py-2">PL <br />Excel</th>
-              <th class="px-3 py-2">
-                PL<br />
-                After <br />Coef
-              </th>
-              <th class="px-3 py-2">Action</th>
+              <th style="width: 8%" class="px-3 py-2">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -225,7 +183,9 @@
                   @input="updateRow(item)"
                 />
               </td>
-              <td class="px-3 py-2" data-label="PL Excel">{{ item.plExcel }}</td>
+              <td class="px-3 py-2" data-label="PL Excel">
+                {{ item.plExcel }}
+              </td>
               <td data-label="PL After Coef">
                 <input
                   class="px-3 py-2 border border-gray-300 rounded w-full"
@@ -250,7 +210,7 @@
       </div>
       <div class="text-white py-2 flex justify-end">
         <button
-          class="bg-green-600 text-white font-bold px-3 py-2 rounded"
+          class="bg-green-600 text-white font-bold px-3 py-2 rounded shadow-md"
           @click="submitPenawaran"
         >
           Buat Penawaran
@@ -266,6 +226,8 @@ import DrawerComponent from "../components/DrawerComponent";
 import { reactive, ref } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import AuthService from "@/AuthService";
+import { useToast } from "vue-toast-notification";
+import "vue-toast-notification/dist/theme-sugar.css";
 
 const searchTextArray = ref([]);
 const searchResults = ref([]);
@@ -273,6 +235,7 @@ var customer_id;
 var standard_discount = 0;
 var additional_discount = 0;
 var grandTotal = 0;
+const $toast = useToast();
 const items = reactive([
   {
     id: uuidv4(),
@@ -445,16 +408,29 @@ function deleteRow(id) {
 }
 async function submitPenawaran() {
   try {
-    const formData = new FormData();
-    items.forEach((item) => {
-      formData.append("products[]", JSON.stringify(item));
-    });
-    formData.append("customer_id", customer_id);
-    const response = await AuthService.submitPenawaran(formData);
-    console.log(response);
-    window.location.href = "/internal";
+    if (customer_id) {
+      if (items.length > 0) {
+        const formData = new FormData();
+        items.forEach((item) => {
+          formData.append("products[]", JSON.stringify(item));
+          if (item.dbID == 0) {
+            throw new Error("Terdapat Kesalahan pada Produk yang Ditambahkan");
+          }
+        });
+        formData.append("customer_id", customer_id);
+        const response = await AuthService.submitPenawaran(formData);
+        console.log(response);
+        $toast.success("Penawaran Berhasil Dibuat", { position: "top" });
+        window.location.href = "/internal";
+      } else {
+        throw new Error("Isi Produk Dalam Penawaran Terlebih Dahulu");
+      }
+    } else {
+      throw new Error("Isi Customer Terlebih Dahulu");
+    }
   } catch (error) {
     console.error("Error submitting penawaran:", error);
+    $toast.error(error, { position: "top" });
   }
 }
 </script>
