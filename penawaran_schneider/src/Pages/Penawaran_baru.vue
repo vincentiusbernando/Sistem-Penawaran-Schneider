@@ -41,191 +41,223 @@
   <HeaderComponent></HeaderComponent>
   <DrawerComponent></DrawerComponent>
   <div class="page">
-  <div class="px-4 py-2">
-    <div class="autocomplete mb-4">
-      <input
-        type="text"
-        v-model="searchTextExternal"
-        @input="searchExternal"
-        placeholder="Search Customer..."
-        class="px-4 py-2 border border-gray-300 rounded w-full"
-      />
-      <div
-        v-if="searchResultsExternal.length > 0"
-        class="autocomplete-items bg-white border border-gray-300 rounded mt-2"
-      >
+    <div class="px-3 py-2">
+      <div class="autocomplete mb-4">
+        <input
+          type="text"
+          v-model="searchTextExternal"
+          @input="searchExternal"
+          placeholder="Search Customer..."
+          class="px-3 py-2 border border-gray-300 rounded w-full"
+        />
         <div
-          v-for="result in searchResultsExternal"
-          :key="result.id"
-          class="autocomplete-item px-4 py-2 cursor-pointer hover:bg-gray-200 hover-text"
-          @click="selectItemExternal(result)"
+          v-if="searchResultsExternal.length > 0"
+          class="autocomplete-items bg-white border border-gray-300 rounded mt-2"
         >
-          {{ result.customer_perusahaan }}
+          <div
+            v-for="result in searchResultsExternal"
+            :key="result.id"
+            class="autocomplete-item px-3 py-2 cursor-pointer hover:bg-gray-200 hover-text"
+            @click="selectItemExternal(result)"
+          >
+            {{ result.customer_perusahaan }}
+          </div>
         </div>
       </div>
-    </div>
-    <div class="text-white py-2 flex justify-end">
-      <button class="bg-green-600 text-white font-bold px-4 py-2 rounded" @click="addRow">
-        Tambah Barang
-      </button>
-    </div>
-    <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
-      <thead>
-        <tr class="bg-green-600 text-white">
-          <th class="px-4 py-2 coladdRowBetween"></th>
-          <th class="px-4 py-2">Ref</th>
-          <th class="px-4 py-2">Description</th>
-          <th class="px-4 py-2">Quantity</th>
-          <th class="px-4 py-2">Unit Price</th>
-          <th class="px-4 py-2">Total Price</th>
-          <th class="px-4 py-2">Delivery Time</th>
-          <th class="px-4 py-2">Remarks</th>
-          <th class="px-4 py-2">Standard Discount (%)</th>
-          <th class="px-4 py-2">Additional Discount (%)</th>
-          <th class="px-4 py-2">Cash Discount (%)</th>
-          <th class="px-4 py-2">Coef</th>
-          <th class="px-4 py-2">PL Excel</th>
-          <th class="px-4 py-2">PL After Coef</th>
-          <th class="px-4 py-2">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="(item, index) in items"
-          :key="item.id"
-          class="border-t border-gray-200 hover:bg-gray-100"
+      <div class="text-white py-2 flex justify-end">
+        <button
+          class="bg-green-600 text-white font-bold px-3 py-2 rounded"
+          @click="addRow"
         >
-          <td class="text-center">
-            <button
-              class="bg-green-600 text-white rounded px-4 py-2"
-              @click="addRowBetween(index + 1)"
+          Tambah Barang
+        </button>
+      </div>
+      <div style="position: relative;">
+        <table class="min-w-full rounded-lg mt-4 bg-white shadow-md overflow-hidden">
+          <thead>
+            <tr class="bg-green-600 text-white">
+              <th class="px-3 py-2 coladdRowBetween"></th>
+              <th class="px-3 py-2">Ref</th>
+              <th class="px-3 py-2">Description</th>
+              <th class="px-3 py-2">Quantity</th>
+              <th class="px-3 py-2">
+                Unit <br />
+                Price
+              </th>
+              <th class="px-3 py-2">
+                Total<br />
+                Price
+              </th>
+              <th class="px-3 py-2">
+                Delivery<br />
+                Time
+              </th>
+              <th class="px-3 py-2">Remarks</th>
+              <th class="px-3 py-2">Standard <br />Discount <br />(%)</th>
+              <th class="px-3 py-2">
+                Additional <br />Discount<br />
+                (%)
+              </th>
+              <th class="px-3 py-2">
+                Cash <br />Discount<br />
+                (%)
+              </th>
+              <th class="px-3 py-2">Coef</th>
+              <th class="px-3 py-2">PL <br />Excel</th>
+              <th class="px-3 py-2">
+                PL<br />
+                After <br />Coef
+              </th>
+              <th class="px-3 py-2">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(item, index) in items"
+              :key="item.id"
+              class="border-t border-gray-200"
             >
-              +
-            </button>
-          </td>
-          <td data-label="Ref">
-            <div class="autocomplete">
-              <input
-                :id="'searchInput-' + item.id"
-                type="text"
-                v-model="searchTextArray[index].text"
-                @input="search(index)"
-                placeholder="Search..."
-                class="px-4 py-2 border border-gray-300 rounded w-full"
-              />
-              <div
-                :id="'searchResults-' + item.id"
-                v-if="
-                  searchResults[index] &&
-                  searchResults[index].results.length > 0
-                "
-                class="autocomplete-items bg-white border border-gray-300 rounded mt-2"
-              >
-                <div
-                  v-for="result in searchResults[index].results"
-                  :key="result.id"
-                  class="autocomplete-item px-4 py-2 hover-text hover:bg-gray-200"
-                  @click="selectItem(result, index)"
+              <td class="text-center">
+                <button
+                  class="bg-green-600 text-white rounded px-3"
+                  @click="addRowBetween(index + 1)"
                 >
-                  {{ result.ref }}
+                  +
+                </button>
+              </td>
+              <td data-label="Ref">
+                <div class="autocomplete">
+                  <input
+                    :id="'searchInput-' + item.id"
+                    type="text"
+                    v-model="searchTextArray[index].text"
+                    @input="search(index)"
+                    placeholder="Search..."
+                    class="px-3 py-2 border border-gray-300 rounded w-full"
+                  />
+                  <div
+                    :id="'searchResults-' + item.id"
+                    v-if="
+                      searchResults[index] &&
+                      searchResults[index].results.length > 0
+                    "
+                    class="autocomplete-items bg-white border border-gray-300 rounded mt-2"
+                  >
+                    <div
+                      v-for="result in searchResults[index].results"
+                      :key="result.id"
+                      class="autocomplete-item px-3 py-2 hover-text hover:bg-gray-200"
+                      @click="selectItem(result, index)"
+                    >
+                      {{ result.ref }}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </td>
-          <td class="px-4 py-2" data-label="Description">{{ item.description }}</td>
-          <td data-label="Quantity">
-            <input
-              class="px-4 py-2 border border-gray-300 rounded w-full"
-              type="number"
-              step="1"
-              min="1"
-              v-model="item.quantity"
-              @input="updateRow(item)"
-            />
-          </td>
-          <td class="px-4 py-2" data-label="Unit Price">{{ item.unitPrice }}</td>
-          <td class="px-4 py-2" data-label="Total Price">{{ item.totalPrice }}</td>
-          <td data-label="Delivery Time">
-            <input
-              class="px-4 py-2 border border-gray-300 rounded w-full"
-              v-model="item.deliveryTime"
-            />
-          </td>
-          <td data-label="Remarks">
-            <input
-              class="px-4 py-2 border border-gray-300 rounded w-full"
-              v-model="item.remarks"
-            />
-          </td>
-          <td data-label="Standard Discount">
-            <input
-              class="px-4 py-2 border border-gray-300 rounded w-full"
-              type="number"
-              step="0.1"
-              min="0"
-              v-model="item.standardDiscount"
-              @input="updateRow(item)"
-            />
-          </td>
-          <td data-label="Additional Discount">
-            <input
-              class="px-4 py-2 border border-gray-300 rounded w-full"
-              type="number"
-              step="0.1"
-              min="0"
-              v-model="item.additionalDiscount"
-              @input="updateRow(item)"
-            />
-          </td>
-          <td data-label="Cash Discount">
-            <input
-              class="px-4 py-2 border border-gray-300 rounded w-full"
-              type="number"
-              step="0.1"
-              min="0"
-              v-model="item.cashDiscount"
-              @input="updateRow(item)"
-            />
-          </td>
-          <td data-label="Coef">
-            <input
-              class="px-4 py-2 border border-gray-300 rounded w-full"
-              type="number"
-              step="0.1"
-              min="0"
-              v-model="item.coef"
-              @input="updateRow(item)"
-            />
-          </td>
-          <td class="px-4 py-2" data-label="PL Excel">{{ item.plExcel }}</td>
-          <td data-label="PL After Coef">
-            <input
-              class="px-4 py-2 border border-gray-300 rounded w-full"
-              v-model="item.plAfterCoef"
-              readonly
-            />
-          </td>
-          <td class="text-center">
-            <button
-              class="delete text-white rounded px-4 py-1"
-              @click="deleteRow(item.id)"
-            >
-              Delete
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="py-2 text-3xl flex justify-end">
-      <h1>Total: Rp. {{ grandTotal }}</h1>
-    </div>
-    <div class="text-white py-2 flex justify-end">
-      <button class="bg-green-600 text-white font-bold px-4 py-2 rounded" @click="submitPenawaran">
-        Buat Penawaran
-      </button>
+              </td>
+              <td class="px-3 py-2" data-label="Description">
+                {{ item.description }}
+              </td>
+              <td data-label="Quantity">
+                <input
+                  class="px-3 py-2 border border-gray-300 rounded w-full"
+                  type="number"
+                  step="1"
+                  min="1"
+                  v-model="item.quantity"
+                  @input="updateRow(item)"
+                />
+              </td>
+              <td class="px-3 py-2" data-label="Unit Price">
+                {{ item.unitPrice }}
+              </td>
+              <td class="px-3 py-2" data-label="Total Price">
+                {{ item.totalPrice }}
+              </td>
+              <td data-label="Delivery Time">
+                <input
+                  class="px-3 py-2 border border-gray-300 rounded w-full"
+                  v-model="item.deliveryTime"
+                />
+              </td>
+              <td data-label="Remarks">
+                <input
+                  class="px-3 py-2 border border-gray-300 rounded w-full"
+                  v-model="item.remarks"
+                />
+              </td>
+              <td data-label="Standard Discount">
+                <input
+                  class="px-3 py-2 border border-gray-300 rounded w-full"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  v-model="item.standardDiscount"
+                  @input="updateRow(item)"
+                />
+              </td>
+              <td data-label="Additional Discount">
+                <input
+                  class="px-3 py-2 border border-gray-300 rounded w-full"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  v-model="item.additionalDiscount"
+                  @input="updateRow(item)"
+                />
+              </td>
+              <td data-label="Cash Discount">
+                <input
+                  class="px-3 py-2 border border-gray-300 rounded w-full"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  v-model="item.cashDiscount"
+                  @input="updateRow(item)"
+                />
+              </td>
+              <td data-label="Coef">
+                <input
+                  class="px-3 py-2 border border-gray-300 rounded w-full"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  v-model="item.coef"
+                  @input="updateRow(item)"
+                />
+              </td>
+              <td class="px-3 py-2" data-label="PL Excel">{{ item.plExcel }}</td>
+              <td data-label="PL After Coef">
+                <input
+                  class="px-3 py-2 border border-gray-300 rounded w-full"
+                  v-model="item.plAfterCoef"
+                  readonly
+                />
+              </td>
+              <td class="text-center">
+                <button
+                  class="delete text-white rounded px-3 py-1"
+                  @click="deleteRow(item.id)"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="py-2 text-3xl flex justify-end">
+        <h1>Total: Rp. {{ grandTotal }}</h1>
+      </div>
+      <div class="text-white py-2 flex justify-end">
+        <button
+          class="bg-green-600 text-white font-bold px-3 py-2 rounded"
+          @click="submitPenawaran"
+        >
+          Buat Penawaran
+        </button>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script setup>

@@ -41,4 +41,5 @@ Route::middleware([InternalMiddleware::class])->group(function () {
     Route::get('/api/search_customer', [CustomerController::class, 'search']);
     Route::get('/product/{by}/{query}', [ProductController::class, 'search_product']);
     Route::post('/api/buat_penawaran', [PenawaranController::class, 'store']);
+    Route::post('/api/update_penawaran', [PenawaranController::class, 'update']);
 });

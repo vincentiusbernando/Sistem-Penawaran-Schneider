@@ -3,7 +3,7 @@
   <DrawerComponent></DrawerComponent>
   <div class="page">
     <div class="px-4 py-2">
-      <table class="min-w-full overflow-hidden">
+      <table class="min-w-full rounded-lg overflow-hidden mt-4 bg-white shadow-md">
         <thead>
           <tr class="bg-green-600 text-white">
             <th class="px-4 py-2">MPG</th>
@@ -16,7 +16,7 @@
           <tr
             v-for="row in data"
             :key="row.id"
-            class="border-b hover:bg-gray-100"
+            class="border-b hover:bg-gray-200"
           >
             <td class="px-4 py-2" data-label="MPG">{{ row.mpg }}</td>
             <td class="px-4 py-2" data-label="Activity">{{ row.activity }}</td>

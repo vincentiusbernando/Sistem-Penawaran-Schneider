@@ -1,9 +1,9 @@
 export default {
   init() {
-    const link = document.createElement("link");
-    link.href = "https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css";
-    link.rel = "stylesheet";
-    document.head.appendChild(link);
+    // const link = document.createElement("link");
+    // link.href = "https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css";
+    // link.rel = "stylesheet";
+    // document.head.appendChild(link);
     const sidebar = document.querySelector(".sidebar");
     const submenuItems = document.querySelectorAll(".submenu_item");
     const sidebarOpen = document.querySelector("#sidebarOpen");

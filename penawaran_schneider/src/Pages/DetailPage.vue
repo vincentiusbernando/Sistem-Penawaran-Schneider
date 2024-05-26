@@ -3,25 +3,58 @@
   <DrawerComponent></DrawerComponent>
   <div class="page">
     <div class="px-4">
-      <div class="flex justify-between">
-        <div>
-          <h3 class="mt-2 font-medium text-gray-900 py-2">
-            {{ head.tgl }}
-          </h3>
-          <h1 class="mt-2 text-3xl font-medium text-gray-900">
-            Customer: {{ head.Customer }}
-          </h1>
-          <h1 class="mt-2 font-medium text-gray-900 py-2">
-            By {{ head.Internal }} from {{ head.Team }}
-          </h1>
+      <div v-if="showMessageBox">{{ txtMessageBox }}</div>
+      <div class="flex justify-between py-2 items-center">
+        <div class="flex items-center">
+          <div
+            class="flex rounded-lg border shadow border-gray-300 py-4 px-3 bg-white items-center"
+          >
+            <i class="bx bx-time bigger_icon"></i>
+            <h1 class="px-3 font-medium text-gray-900">
+              {{ head.tgl }}
+            </h1>
+          </div>
+          <div
+            class="flex rounded-lg border shadow border-gray-300 py-4 px-3 ml-4 bg-white items-center"
+          >
+            <i class="bx bx-user bigger_icon"></i>
+            <h1 class="px-3 font-medium text-gray-900">
+              {{ head.Customer }} - {{ head.Perusahaan }}
+            </h1>
+          </div>
+          <div
+            class="flex rounded-lg border shadow border-gray-300 py-4 px-3 ml-4 bg-white items-center"
+          >
+            <i class="bx bx-task bigger_icon"></i>
+            <h1 class="px-3 font-medium text-gray-900">
+              {{ head.Internal }} from {{ head.Team }}
+            </h1>
+          </div>
         </div>
-        <div>
-          <button class="bg-green-600 text-white font-bold px-4 py-2 rounded" @click="saveModifiedRows">
-            Save
-          </button>
+        <div class="flex">
+          <div>
+            <button
+              class="bg-green-600 text-white font-bold px-4 py-2 rounded items-center flex"
+              @click="fetchData"
+            >
+              <i class="bx bx-refresh bigger_icon"></i>
+              <p class="ml-2">Refresh</p>
+            </button>
+          </div>
+          <div>
+            <button
+              class="bg-green-600 text-white font-bold px-4 py-2 rounded ml-2 items-center flex"
+              @click="saveModifiedRows"
+            >
+              <i class="bx bx-save bigger_icon"></i>
+              <p class="ml-2">Save</p>
+            </button>
+          </div>
         </div>
       </div>
-      <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden mt-4">
+      <table
+        class="min-w-full rounded-lg overflow-hidden mt-4 bg-white shadow-md"
+      >
         <thead>
           <tr class="bg-green-600 text-white">
             <th class="px-4 py-2">Ref</th>
@@ -41,7 +74,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(row, index) in data" :key="row.id" class="border-t border-gray-200 hover:bg-gray-100">
+          <tr
+            v-for="(row, index) in data"
+            :key="row.id"
+            class="border-t border-gray-200 hover:bg-gray-200"
+          >
             <td class="px-4 py-2" data-label="Ref">
               {{ row.ref }}
             </td>
@@ -58,13 +95,36 @@
               {{ row.total_price }}
             </td>
             <td data-label="Delivery Time">
-              <input class="px-3 py-2" v-model="row.delivery_time" @input="markModified(index, 'delivery_time')" />
+              <input
+                class="px-3 py-2"
+                v-model="row.delivery_time"
+                @input="markModified(row.id, index, 'delivery_time')"
+              />
             </td>
-            <td class="px-4 py-2" data-label="Status">
-              {{ row.status }}
+            <td class="" data-label="Status">
+              <select
+                v-model="data[index].status"
+                @change="markModified(row.id, index, 'status')"
+                class="py-2"
+              >
+                <option
+                  :value="'On Process'"
+                  :selected="row.status === 'On Process'"
+                >
+                  On Process
+                </option>
+                <option :value="'Done'" :selected="row.status === 'Done'">
+                  Done
+                </option>
+              </select>
             </td>
+
             <td data-label="Remarks">
-              <input class="px-3 py-2" v-model="row.remarks" @input="markModified(index, 'remarks')" />
+              <input
+                class="px-3 py-2"
+                v-model="row.remarks"
+                @input="markModified(row.id, index, 'remarks')"
+              />
             </td>
             <td class="px-4 py-2" data-label="Standard Discount">
               {{ row.standard_discount }}%
@@ -89,38 +149,44 @@
       </table>
     </div>
   </div>
-
 </template>
 
 <script setup>
 import HeaderComponent from "../components/HeaderComponent";
 import DrawerComponent from "../components/DrawerComponent";
-import { onMounted, ref } from "vue";
-import { useRoute } from 'vue-router';
+import { ref, computed } from "vue";
+import { useRoute } from "vue-router";
 import AuthService from "@/AuthService";
 
 const data = ref([]);
 const head = ref({});
 const modifiedRows = ref([]);
 const route = useRoute();
+var showMessageBox = false;
+var txtMessageBox = "";
 
-onMounted(async () => {
+const fetchData = async () => {
   try {
-    const response = await AuthService.detailPenawaranInternal(route.params.uri);
+    const response = await AuthService.detailPenawaranInternal(
+      route.params.uri
+    );
     data.value = response.data.data;
     head.value = response.data.head[0];
+    console.log(data.value[0].id);
   } catch (error) {
     console.error("Error fetching data:", error);
   }
-});
-
-const markModified = (rowIndex, fieldName) => {
+};
+fetchData();
+const markModified = (id, rowIndex, fieldName) => {
   const modifiedEntry = {
-    row: rowIndex,
+    row: id,
     field: fieldName,
-    value: data.value[rowIndex][fieldName]
+    value: data.value[rowIndex][fieldName],
   };
-  const existingEntry = modifiedRows.value.find(entry => entry.row === rowIndex && entry.field === fieldName);
+  const existingEntry = modifiedRows.value.find(
+    (entry) => entry.row === id && entry.field === fieldName
+  );
   if (existingEntry) {
     existingEntry.value = modifiedEntry.value;
   } else {
@@ -129,7 +195,30 @@ const markModified = (rowIndex, fieldName) => {
 };
 
 const saveModifiedRows = () => {
-  console.log('Modified rows:', modifiedRows.value);
-  // Add your logic to handle the saving of modified rows here.
+  const processedData = computed(() => {
+    return modifiedRows.value.reduce((result, item) => {
+      const existingRow = result.find((row) => row.row === item.row);
+      if (existingRow) {
+        existingRow.fields.push({ [item.field]: item.value });
+      } else {
+        result.push({ row: item.row, fields: [{ [item.field]: item.value }] });
+      }
+      return result;
+    }, []);
+  });
+  const id_penawaran = head.value.id;
+  const jsonData = JSON.stringify(processedData.value);
+  console.log(jsonData);
+  updatePenawaran(id_penawaran, jsonData);
 };
+async function updatePenawaran(id_penawaran, jsonData) {
+  try {
+    const response = await AuthService.updatePenawaran(id_penawaran, jsonData);
+    console.log(response);
+    showMessageBox = true;
+    txtMessageBox = "Successfully updated";
+  } catch (error) {
+    console.log(error);
+  }
+}
 </script>

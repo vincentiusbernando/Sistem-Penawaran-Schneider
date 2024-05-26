@@ -40,7 +40,7 @@
         </div>
       </form>
       <br />
-      <table class="min-w-full border border-gray-200 rounded-md overflow-hidden">
+      <table class="min-w-full rounded-lg overflow-hidden mt-4 bg-white shadow-md">
         <thead>
           <tr class="bg-green-600 text-white">
             <th class="px-4 py-2">ID</th>

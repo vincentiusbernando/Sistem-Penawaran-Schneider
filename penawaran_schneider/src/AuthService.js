@@ -26,9 +26,15 @@ export default {
     return axios.get("/api/search_product?search=" + query);
   },
   detailPenawaranInternal(uri) {
-    return axios.get("/api/internal/" + uri); 
+    return axios.get("/api/internal/" + uri);
   },
-  submitPenawaran(formData){
+  submitPenawaran(formData) {
     return axios.post("/api/buat_penawaran", formData);
-  }
+  },
+  updatePenawaran(id_penawaran, jsonData) {
+    return axios.post("/api/update_penawaran", {
+      jsonData: jsonData,
+      id_penawaran: id_penawaran,
+    });
+  },
 };

@@ -1,5 +1,6 @@
 import "./assets/output.css";
 import "./assets/navbar.css";
+import "./assets/icon.css";
 // Import Vue.js and LoginPage component
 import { createApp } from 'vue';
 import App from './App.vue';

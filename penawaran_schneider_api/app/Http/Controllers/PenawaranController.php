@@ -22,7 +22,7 @@ class PenawaranController extends Controller
             ->join('teams as t', 'penawarans.teams_id', '=', 't.id')
             ->join('customers as c', 'penawarans.customers_id', '=', 'c.id')
             ->join("perusahaans", "perusahaans.id", '=', 'c.perusahaans_id')
-            ->select("penawarans.tgl", "t.nama as Team", "internals.nama as Internal", "c.nama as Customer", "penawarans.uri as uri", "perusahaans.nama as Perusahaan")
+            ->select(DB::raw("DATE_FORMAT(tgl, '%W, %e %M %Y, %H:%i:%s') tgl"), "t.nama as Team", "internals.nama as Internal", "c.nama as Customer", "penawarans.uri as uri", "perusahaans.nama as Perusahaan")
             ->orderBy('penawarans.tgl', 'desc')
             ->get();
         return $data;
@@ -128,7 +128,8 @@ class PenawaranController extends Controller
         $head = Penawaran::join('internals', 'penawarans.internals_id', '=', 'internals.id')
             ->join('teams as t', 'penawarans.teams_id', '=', 't.id')
             ->join('customers as c', 'penawarans.customers_id', '=', 'c.id')
-            ->select("penawarans.tgl", "t.nama as Team", "internals.nama as Internal", "c.nama as Customer", "t.id as teams_id")
+            ->join('perusahaans as p', 'p.id', '=', 'c.perusahaans_id')
+            ->select(DB::raw("DATE_FORMAT(tgl, '%W, %e %M %Y, %H:%i:%s') tgl"), "t.nama as Team", "internals.nama as Internal", "c.nama as Customer", "t.id as teams_id", "penawarans.id", "p.nama as Perusahaan")
             ->where('penawarans.uri', '=', $uri)
             ->get();
         return json_encode(["data" => $data, "head" => $head]);
@@ -148,9 +149,38 @@ class PenawaranController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
         //
+        $jsonData = $request->input('jsonData');
+        $id_penawaran = $request->input('id_penawaran');
+        $data = json_decode($jsonData, true);
+        DB::beginTransaction();
+        // try {
+            foreach ($data as $item) {
+                $products_id = $item['row'];
+                $fields = $item['fields'];
+
+                $updateData = [];
+                foreach ($fields as $field) {
+                    foreach ($field as $columnName => $value) {
+                        $updateData[$columnName] = $value;
+                    }
+                }
+
+                DB::table('products_has_penawarans')
+                    ->where('penawarans_id', $id_penawaran)
+                    ->where('products_id', $products_id)
+                    ->update($updateData);
+            }
+
+            DB::commit();
+
+            return response()->json(['message' => 'Data updated successfully']);
+        // } catch (\Exception $e) {
+        //     DB::rollBack();
+        //     return response()->json(['message' => $fields], 500);
+        // }
     }
 
     /**
