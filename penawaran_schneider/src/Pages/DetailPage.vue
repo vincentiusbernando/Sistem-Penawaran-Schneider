@@ -62,7 +62,6 @@
             <th style="width: 5%" class="px-4 py-2">Unit Price</th>
             <th style="width: 5%" class="px-4 py-2">Total Price</th>
             <th style="width: 5%" class="px-4 py-2">Delivery Time</th>
-            <th style="width: 5%" class="px-4 py-2">Status</th>
             <th style="width: 7%" class="px-4 py-2">Remarks</th>
             <th style="width: 5%" class="px-4 py-2">Standard Discount</th>
             <th style="width: 6%" class="px-4 py-2">Additional Discount</th>
@@ -100,25 +99,6 @@
                 @input="markModified(row.id, index, 'delivery_time')"
               />
             </td>
-            <td class="" data-label="Status">
-              <select
-                v-model="data[index].status"
-                @change="markModified(row.id, index, 'status')"
-                class="py-2"
-              >
-                <option
-                  :value="'On Process'"
-                  :selected="row.status === 'On Process'"
-                  class="py-2"
-                >
-                  On Process
-                </option>
-                <option :value="'Done'" :selected="row.status === 'Done'" class="py-2">
-                  Done
-                </option>
-              </select>
-            </td>
-
             <td data-label="Remarks">
               <input
                 class="px-3 py-2"
@@ -178,6 +158,7 @@ const fetchData = async () => {
     console.error("Error fetching data:", error);
   }
 };
+fetchData();
 const Refresh=()=>{
   fetchData();
   $toast.success("Refreshed", { position: "top" });

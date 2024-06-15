@@ -11,9 +11,11 @@
     "@inertiajs/inertia": "^0.11.1",
     "@inertiajs/inertia-vue": "^0.8.0",
     "@inertiajs/inertia-vue3": "^0.6.0",
+    "chart.js": "^4.4.3",
     "core-js": "^3.8.3",
     "laravel-vite-plugin": "^1.0.2",
     "vue": "^3.2.13",
+    "vue-chartjs": "^5.3.1",
     "vue-router": "^4.3.2",
     "vue-toast-notification": "^3.1.2"
   },
