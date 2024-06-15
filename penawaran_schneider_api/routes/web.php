@@ -34,12 +34,20 @@ Route::middleware(CustomerMiddleware::class)->group(function () {
 Route::middleware([InternalMiddleware::class])->group(function () {
     Route::get('/penawaran_baru', [PenawaranController::class, 'penawaran_baru']);
     Route::get('/api/internal', [PenawaranController::class, 'index']);
-    Route::get('/api/product', [ProductController::class, 'index']);
-    Route::get('/api/sd', [StandardDiscountController::class, 'index']);
     Route::get('/api/internal/{uri}', [PenawaranController::class, 'show']);
-    Route::get('/api/search_product', [ProductController::class, 'search_ref']);
-    Route::get('/api/search_customer', [CustomerController::class, 'search']);
-    Route::get('/product/{by}/{query}', [ProductController::class, 'search_product']);
     Route::post('/api/buat_penawaran', [PenawaranController::class, 'store']);
     Route::post('/api/update_penawaran', [PenawaranController::class, 'update']);
+    Route::post('/api/dashboard', [PenawaranController::class, 'dashboard']);
+
+
+    Route::get('/api/product', [ProductController::class, 'index']);
+    Route::get('/api/search_product', [ProductController::class, 'search_ref']);
+    Route::get('/product/{by}/{query}', [ProductController::class, 'search_product']);
+    Route::post('/api/buat_product', [ProductController::class, 'store']);
+
+
+    Route::get('/api/sd', [StandardDiscountController::class, 'index']);
+
+
+    Route::get('/api/search_customer', [CustomerController::class, 'search']);
 });

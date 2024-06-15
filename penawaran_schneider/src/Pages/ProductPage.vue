@@ -1,7 +1,7 @@
 <style scoped>
-  table{
-    font-size: 100%;
-  }
+table {
+  font-size: 100%;
+}
 </style>
 <template>
   <HeaderComponent></HeaderComponent>
@@ -9,43 +9,59 @@
   <div class="page">
     <div class="px-4 py-2">
       <form :action="formAction" method="GET" @submit.prevent="submitForm">
-        <h1 class="text-3xl py-2 font-bold">Search by</h1>
-        <div class="flex items-center">
-          <label class="mr-4">
-            <input
-              type="radio"
-              v-model="searchOption"
-              value="ref"
-              name="searchOption"
-              class="form-radio"
-            />
-            <span class="ml-2">Ref</span>
-          </label>
-          <label>
-            <input
-              type="radio"
-              v-model="searchOption"
-              value="desc"
-              name="searchOption"
-              class="form-radio"
-            />
-            <span class="ml-2">Description</span>
-          </label>
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 class="text-3xl py-2 font-bold">Search by</h1>
+            <div class="flex items-center">
+              <label>
+                <input
+                  type="radio"
+                  v-model="searchOption"
+                  value="ref"
+                  name="searchOption"
+                  class="ml-2"
+                />
+                <span>Ref</span>
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  v-model="searchOption"
+                  value="desc"
+                  name="searchOption"
+                  class="ml-2"
+                />
+                <span>Description</span>
+              </label>
+            </div>
+          </div>
+          <router-link to="/product_baru">
+            <button
+              class="bg-green-600 text-white font-bold px-4 py-2 rounded shadow-md"
+              router
+            >
+              Tambah Produk
+            </button>
+          </router-link>
         </div>
-        <div class="flex w-full">
+        <div class="flex w-full mt-4">
           <input
             type="text"
             placeholder="Search Product..."
             v-model="searchQuery"
             class="px-4 py-2 w-full border border-gray-200 rounded-md"
           />
-          <button type="submit" class="bg-green-600 text-white font-bold px-4 py-2 rounded-r-lg">
-            Search
-          </button>
+          <a href="/">
+            <button
+              class="bg-green-600 text-white font-bold px-4 py-2 rounded shadow-md"
+            >
+              Search
+            </button>
+          </a>
         </div>
       </form>
       <br />
-      <table class="min-w-full rounded-lg overflow-hidden mt-4 bg-white shadow-md">
+      <table class="min-w-full rounded-lg overflow-hidden bg-white shadow-md">
         <thead>
           <tr class="bg-green-600 text-white">
             <th style="width: 2%" class="px-4 py-2">ID</th>
@@ -64,7 +80,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="row in data" :key="row.id" class="border-gray-200 hover:bg-gray-100">
+          <tr
+            v-for="row in data"
+            :key="row.id"
+            class="border-gray-200 hover:bg-gray-100"
+          >
             <td class="px-4 py-2" data-label="ID">{{ row.id }}</td>
             <td class="px-4 py-2" data-label="Ref">
               {{ row.ref }}
@@ -105,7 +125,6 @@
       </table>
     </div>
   </div>
-
 </template>
 
 <script setup>

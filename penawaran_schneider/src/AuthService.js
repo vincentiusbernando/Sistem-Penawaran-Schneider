@@ -1,6 +1,6 @@
 import axios from "axios";
-// axios.defaults.baseURL = "https://penawaranschneiderapi.rfqbstg.com";
-axios.defaults.baseURL = "http://127.0.0.1:8000";
+axios.defaults.baseURL = "https://penawaranschneiderapi.rfqbstg.com";
+// axios.defaults.baseURL = "http://127.0.0.1:8000";
 axios.defaults.headers.common["Authorization"] =
   "Bearer " + localStorage.getItem("sessionToken");
 
@@ -14,8 +14,14 @@ export default {
   internal() {
     return axios.get("/api/internal");
   },
+  dashboard() {
+    return axios.post("/api/dashboard");
+  },
   product() {
     return axios.get("/api/product");
+  },
+  submitProduct(formData) {
+    return axios.post("/api/buat_product", formData);
   },
   standardDiscount() {
     return axios.get("/api/sd");

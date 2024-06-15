@@ -204,6 +204,10 @@ table {
 .overflow-hidden{
   overflow: hidden;
 }
+.overflow-auto{
+  overflow: auto;
+}
+
 .table_small_text{
     font-size: 80%;
 }
@@ -632,6 +636,10 @@ video {
   margin-left: 1rem;
 }
 
+.mt-4 {
+  margin-top: 1rem;
+}
+
 .mt-6 {
   margin-top: 1.5rem;
 }
@@ -655,7 +663,9 @@ video {
 .h-5 {
   height: 1.25rem;
 }
-
+.h-48{
+  height: 12rem;
+}
 .min-h-screen {
   min-height: 100vh;
 }

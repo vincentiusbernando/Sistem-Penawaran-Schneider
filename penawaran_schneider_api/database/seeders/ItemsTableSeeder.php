@@ -15,7 +15,7 @@ class ItemsTableSeeder extends Seeder
         //     ['id' => 3, 'ref' => 'REF003', 'material' => 'Material C', 'description' => 'Description C', 'price' => 200.00, 'bu' => 'DE', 'activity' => 'DPLVP', 'standard_discounts_mpg' => 'ZI', 'type' => 'ED', 'sub_type' => 'ED', 'time' => 'PBQ', 'activity_detail' => 'DPLVP LVC', 'stock' => 100],
         //     // Add more seed data as needed
         // ]);
-        for ($i = 5; $i <= 1000; $i++) {
+        for ($i = 501; $i <= 1005; $i++) {
             $products[] = [
                 'id' => $i,
                 'ref' => sprintf('REF%03d', $i),

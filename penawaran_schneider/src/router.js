@@ -10,6 +10,7 @@ import InternalPage from "./Pages/InternalPage.vue";
 import Penawaran_baru from "./Pages/Penawaran_baru.vue";
 import ProductPage from "./Pages/ProductPage.vue";
 import SDPage from "./Pages/SDPage.vue";
+import Product_baru from "./Pages/Product_baru.vue";
 // import axios from "axios";
 // import { API_URL } from "./constants";
 const routes = [
@@ -43,6 +44,11 @@ const routes = [
   {
     path: "/product",
     component: ProductPage,
+    meta: { requiresInternalAuth: true },
+  },
+  {
+    path: "/product_baru",
+    component: Product_baru,
     meta: { requiresInternalAuth: true },
   },
   { path: "/sd", component: SDPage, meta: { requiresInternalAuth: true } },

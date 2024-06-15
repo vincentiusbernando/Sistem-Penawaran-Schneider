@@ -10,12 +10,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Product extends Model
 {
     use HasFactory;
-    protected $table="products";
-    protected $primaryKey="id";
-    public function standard_discounts():BelongsTo{
+    protected $table = "products";
+    protected $primaryKey = "id";
+    public $timestamps = false;
+    public function standard_discounts(): BelongsTo
+    {
         return $this->belongsTo(StandardDiscount::class);
     }
-    public function penawarans():BelongsToMany{
+    public function penawarans(): BelongsToMany
+    {
         return $this->belongsToMany(Penawaran::class);
     }
 }
