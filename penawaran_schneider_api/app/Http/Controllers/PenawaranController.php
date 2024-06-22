@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Internal;
 use App\Models\Penawaran;
 use App\Models\Product;
 use Firebase\JWT\JWT;
@@ -298,6 +299,9 @@ class PenawaranController extends Controller
             ->groupBy('customers.nama', 'perusahaans.nama')
             ->get();
 
+
+        $internals = Internal::select("*")->get();
+
         $data = [
             'currentWeekTotalPrice' => $currentWeekTotalPrice,
             'lastWeekTotalPrice' => $lastWeekTotalPrice,
@@ -309,6 +313,7 @@ class PenawaranController extends Controller
             'lastThreeWeeksQuantity' => $lastThreeWeeksQuantity,
             'lastMonthTotalPrice' => $lastMonthTotalPrice,
             'lastMonthQuantity' => $lastMonthQuantity,
+            'internals' => $internals,
         ];
         // Mengonversi array menjadi format JSON
         return $data;

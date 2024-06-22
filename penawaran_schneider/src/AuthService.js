@@ -1,6 +1,6 @@
 import axios from "axios";
-axios.defaults.baseURL = "https://penawaranschneiderapi.rfqbstg.com";
-// axios.defaults.baseURL = "http://127.0.0.1:8000";
+// axios.defaults.baseURL = "https://penawaranschneiderapi.rfqbstg.com";
+axios.defaults.baseURL = "http://127.0.0.1:8000";
 axios.defaults.headers.common["Authorization"] =
   "Bearer " + localStorage.getItem("sessionToken");
 
@@ -37,6 +37,9 @@ export default {
   },
   submitPenawaran(formData) {
     return axios.post("/api/buat_penawaran", formData);
+  },
+  summary(formData) {
+    return axios.post("/api/summary", formData);
   },
   updatePenawaran(id_penawaran, jsonData) {
     return axios.post("/api/update_penawaran", {

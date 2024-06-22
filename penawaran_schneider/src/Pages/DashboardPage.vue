@@ -72,6 +72,89 @@
           <pie-chart :chartData="pieChartlastMonthQuantity" />
         </div>
       </div>
+      <div class="px-4 mt-8">
+        <div class="shadow rounded-lg border bg-white">
+          <h1 class="text-3xl py-2 mt-6">Summary Internal</h1>
+          <div class="py-2 px-4 flex justify-center" style="align-items: start;">
+            <div class="flex items-center py-2 px-4">
+              <h1>User Internal</h1>
+              <select
+                id="internals-select"
+                v-model="selectedInternal"
+                class="px-4 py-2 shadow rounded"
+              >
+                <option
+                  v-for="internal in internals"
+                  :key="internal.id"
+                  :value="internal.id"
+                >
+                  {{ internal.nama }}
+                </option>
+              </select>
+            </div>
+            <div class="flex items-center py-2 px-4">
+              <h1>Qty List Appear Per User</h1>
+              <input
+                type="number"
+                class="px-4 py-2 shadow rounded"
+                min="1"
+                value="1"
+              />
+            </div>
+            <div class="text-left">
+              <div class="flex justify-between py-2">
+                <label for="date-from" class="py-2">From</label>
+                <input
+                  type="date"
+                  id="date-from"
+                  v-model="dateFrom"
+                  class="py-2 px-4 shadow rounded"
+                />
+              </div>
+              <div class="flex justify-between py-2">
+                <label for="date-to" class="py-2">To</label>
+                <input
+                  type="date"
+                  id="date-to"
+                  v-model="dateTo"
+                  class="py-2 px-4 shadow rounded"
+                />
+              </div>
+            </div>
+            <div class="text-white py-2 flex justify-end">
+              <button
+                class="bg-green-600 text-white font-bold px-3 py-2 rounded shadow-md"
+                @click="fetchSummary"
+              >
+                Search
+              </button>
+            </div>
+          </div>
+          <div class="px-4 py-2">
+            <table
+              class="min-w-full rounded-lg overflow-hidden mt-4 bg-white shadow-md"
+              v-if="summary"
+            >
+              <thead>
+                <tr class="bg-green-600 text-white">
+                  <th class="px-4 py-2 text-left">Name</th>
+                  <th class="px-4 py-2 text-left">Link Offer</th>
+                  <th class="px-4 py-2 text-left">Date Offer</th>
+                  <th class="px-4 py-2 text-left">Company Name</th>
+                  <th class="px-4 py-2 text-left">Total Offer</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="row in data"
+                  :key="row.id"
+                  class="border-t border-gray-200 hover:bg-gray-200"
+                ></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -165,10 +248,27 @@ let pieChartlastMonthQuantity = ref({
     },
   ],
 });
+const internals = ref([]);
+const selectedInternal = ref(null);
+const today = new Date().toISOString().split("T")[0];
+const dateFrom = ref(today);
+const dateTo = ref(today);
+let summary = null;
+async function fetchSummary() {
+  try {
+    const formData = new FormData();
+    const response = await AuthService.summary(formData);
+    summary = response.data.summary;
+    console.log(response);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
 onMounted(async () => {
   try {
     const response = await AuthService.dashboard();
     dashboard.value = response.data;
+    internals.value = response.data.internals;
     if (response.data.lastThreeWeeksTotalPrice.length > 0) {
       pieChartlastThreeWeeksTotalPrice.value = {
         labels: response.data.lastThreeWeeksTotalPrice.map(
@@ -269,9 +369,7 @@ onMounted(async () => {
         ),
         datasets: [
           {
-            data: response.data.currentWeekQuantity.map(
-              (entry) => entry.total
-            ),
+            data: response.data.currentWeekQuantity.map((entry) => entry.total),
           },
         ],
       };

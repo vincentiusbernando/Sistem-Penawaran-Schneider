@@ -85,7 +85,9 @@ hr {
   /* 3 */
 }
 .page{
-    padding-top: 6em; padding-left: 5em
+    padding-top: 6em; 
+    padding-left: 5em;
+    padding-bottom: 10em;
 }
 
 /*
@@ -842,6 +844,9 @@ video {
 
 .text-center {
   text-align: center;
+}
+.text-left {
+  text-align: left;
 }
 
 .text-3xl {
