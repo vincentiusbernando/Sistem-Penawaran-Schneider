@@ -101,8 +101,11 @@ export default {
           console.log("tunggu")
           console.log(response)
           if (response.data.success) {
+            localStorage.setItem("nama", response.data.user.nama);
             localStorage.setItem("sessionToken", response.data.token);
             localStorage.setItem("role", "internal");
+            localStorage.setItem("akses", response.data.user.role);
+
             window.location.href = response.data.redirectUrl;
           } else {
             this.error = true;
@@ -110,6 +113,7 @@ export default {
         } else {
           response = await AuthService.loginCustomer(this.formData);
           if (response.data.success) {
+            localStorage.setItem("nama", response.data.user.nama);  
             localStorage.setItem("sessionToken", response.data.token);
             localStorage.setItem("role", "customer");
             window.location.href = response.data.redirectUrl;

@@ -193,129 +193,85 @@ class PenawaranController extends Controller
 
     public function dashboard()
     {
-        $currentWeekTotalPrice = DB::table('penawarans')
+        $totalPerMinggu = DB::table('penawarans')
             ->join('products_has_penawarans', 'products_has_penawarans.penawarans_id', '=', 'penawarans.id')
             ->join('customers', 'penawarans.customers_id', '=', 'customers.id')
             ->join('perusahaans', 'customers.perusahaans_id', '=', 'perusahaans.id')
             ->select(DB::raw("CONCAT(customers.nama, ' - ', perusahaans.nama) as customer"), DB::raw("sum(products_has_penawarans.total_price) as total"))
-            ->whereRaw("tgl >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY)")
-            ->whereRaw("tgl <= NOW()")
+            ->whereBetween('penawarans.tgl', [now()->subDays(7), now()])
             ->groupBy('customers.nama', 'perusahaans.nama')
             ->get();
-
-
-
-        $lastWeekTotalPrice = DB::table('penawarans')
+        $totalPer4Minggu = DB::table('penawarans')
             ->join('products_has_penawarans', 'products_has_penawarans.penawarans_id', '=', 'penawarans.id')
             ->join('customers', 'penawarans.customers_id', '=', 'customers.id')
             ->join('perusahaans', 'customers.perusahaans_id', '=', 'perusahaans.id')
             ->select(DB::raw("CONCAT(customers.nama, ' - ', perusahaans.nama) as customer"), DB::raw("sum(products_has_penawarans.total_price) as total"))
-            ->whereRaw("WEEK(tgl, 1) = WEEK(NOW(), 1) - 1")
-            ->whereRaw("tgl >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) + 7 DAY)")
-            ->whereRaw("tgl < DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY)")
+            ->whereBetween('penawarans.tgl', [now()->subDays(28), now()])
             ->groupBy('customers.nama', 'perusahaans.nama')
             ->get();
-
-        $lastTwoWeeksTotalPrice = DB::table('penawarans')
+        $qtyPerMinggu = DB::table('penawarans')
             ->join('products_has_penawarans', 'products_has_penawarans.penawarans_id', '=', 'penawarans.id')
             ->join('customers', 'penawarans.customers_id', '=', 'customers.id')
             ->join('perusahaans', 'customers.perusahaans_id', '=', 'perusahaans.id')
             ->select(DB::raw("CONCAT(customers.nama, ' - ', perusahaans.nama) as customer"), DB::raw("sum(products_has_penawarans.total_price) as total"))
-            ->whereRaw("WEEK(tgl, 1) = WEEK(NOW(), 1) - 2")
-            ->whereRaw("tgl >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) + 14 DAY)")
-            ->whereRaw("tgl < DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) + 7 DAY)")
+            ->whereBetween('penawarans.tgl', [now()->subDays(7), now()])
             ->groupBy('customers.nama', 'perusahaans.nama')
             ->get();
-
-        $lastThreeWeeksTotalPrice = DB::table('penawarans')
+        $qtyPer4Minggu = DB::table('penawarans')
             ->join('products_has_penawarans', 'products_has_penawarans.penawarans_id', '=', 'penawarans.id')
             ->join('customers', 'penawarans.customers_id', '=', 'customers.id')
             ->join('perusahaans', 'customers.perusahaans_id', '=', 'perusahaans.id')
             ->select(DB::raw("CONCAT(customers.nama, ' - ', perusahaans.nama) as customer"), DB::raw("sum(products_has_penawarans.total_price) as total"))
-            ->whereRaw("WEEK(tgl, 1) = WEEK(NOW(), 1) - 3")
-            ->whereRaw("tgl >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) + 21 DAY)")
-            ->whereRaw("tgl < DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) + 14 DAY)")
+            ->whereBetween('penawarans.tgl', [now()->subDays(28), now()])
             ->groupBy('customers.nama', 'perusahaans.nama')
             ->get();
-
-        $currentWeekQuantity = DB::table('penawarans')
-            ->join('products_has_penawarans', 'products_has_penawarans.penawarans_id', '=', 'penawarans.id')
-            ->join('customers', 'penawarans.customers_id', '=', 'customers.id')
-            ->join('perusahaans', 'customers.perusahaans_id', '=', 'perusahaans.id')
-            ->select(DB::raw("CONCAT(customers.nama, ' - ', perusahaans.nama) as customer"), DB::raw("sum(products_has_penawarans.quantity) as total"))
-            ->whereRaw("tgl >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY)")
-            ->whereRaw("tgl <= NOW()")
-            ->groupBy('customers.nama', 'perusahaans.nama')
-            ->get();
-
-        $lastWeekQuantity = DB::table('penawarans')
-            ->join('products_has_penawarans', 'products_has_penawarans.penawarans_id', '=', 'penawarans.id')
-            ->join('customers', 'penawarans.customers_id', '=', 'customers.id')
-            ->join('perusahaans', 'customers.perusahaans_id', '=', 'perusahaans.id')
-            ->select(DB::raw("CONCAT(customers.nama, ' - ', perusahaans.nama) as customer"), DB::raw("sum(products_has_penawarans.quantity) as total"))
-            ->whereRaw("WEEK(tgl, 1) = WEEK(NOW(), 1) - 1")
-            ->whereRaw("tgl >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) + 7 DAY)")
-            ->whereRaw("tgl < DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY)")
-            ->groupBy('customers.nama', 'perusahaans.nama')
-            ->get();
-
-        $lastTwoWeeksQuantity = DB::table('penawarans')
-            ->join('products_has_penawarans', 'products_has_penawarans.penawarans_id', '=', 'penawarans.id')
-            ->join('customers', 'penawarans.customers_id', '=', 'customers.id')
-            ->join('perusahaans', 'customers.perusahaans_id', '=', 'perusahaans.id')
-            ->select(DB::raw("CONCAT(customers.nama, ' - ', perusahaans.nama) as customer"), DB::raw("sum(products_has_penawarans.quantity) as total"))
-            ->whereRaw("WEEK(tgl, 1) = WEEK(NOW(), 1) - 2")
-            ->whereRaw("tgl >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) + 14 DAY)")
-            ->whereRaw("tgl < DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) + 7 DAY)")
-            ->groupBy('customers.nama', 'perusahaans.nama')
-            ->get();
-
-        $lastThreeWeeksQuantity = DB::table('penawarans')
-            ->join('products_has_penawarans', 'products_has_penawarans.penawarans_id', '=', 'penawarans.id')
-            ->join('customers', 'penawarans.customers_id', '=', 'customers.id')
-            ->join('perusahaans', 'customers.perusahaans_id', '=', 'perusahaans.id')
-            ->select(DB::raw("CONCAT(customers.nama, ' - ', perusahaans.nama) as customer"), DB::raw("sum(products_has_penawarans.quantity) as total"))
-            ->whereRaw("WEEK(tgl, 1) = WEEK(NOW(), 1) - 3")
-            ->whereRaw("tgl >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) + 21 DAY)")
-            ->whereRaw("tgl < DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) + 14 DAY)")
-            ->groupBy('customers.nama', 'perusahaans.nama')
-            ->get();
-        $lastMonthTotalPrice = DB::table('penawarans')
-            ->join('products_has_penawarans', 'products_has_penawarans.penawarans_id', '=', 'penawarans.id')
-            ->join('customers', 'penawarans.customers_id', '=', 'customers.id')
-            ->join('perusahaans', 'customers.perusahaans_id', '=', 'perusahaans.id')
-            ->select(DB::raw("CONCAT(customers.nama, ' - ', perusahaans.nama) as customer"), DB::raw("sum(products_has_penawarans.total_price) as total"))
-            ->whereRaw("tgl >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)")
-            ->whereRaw("tgl <= NOW()")
-            ->groupBy('customers.nama', 'perusahaans.nama')
-            ->get();
-        $lastMonthQuantity = DB::table('penawarans')
-            ->join('products_has_penawarans', 'products_has_penawarans.penawarans_id', '=', 'penawarans.id')
-            ->join('customers', 'penawarans.customers_id', '=', 'customers.id')
-            ->join('perusahaans', 'customers.perusahaans_id', '=', 'perusahaans.id')
-            ->select(DB::raw("CONCAT(customers.nama, ' - ', perusahaans.nama) as customer"), DB::raw("sum(products_has_penawarans.quantity) as total"))
-            ->whereRaw("tgl >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)")
-            ->whereRaw("tgl <= NOW()")
-            ->groupBy('customers.nama', 'perusahaans.nama')
-            ->get();
-
 
         $internals = Internal::select("*")->get();
 
         $data = [
-            'currentWeekTotalPrice' => $currentWeekTotalPrice,
-            'lastWeekTotalPrice' => $lastWeekTotalPrice,
-            'lastTwoWeeksTotalPrice' => $lastTwoWeeksTotalPrice,
-            'lastThreeWeeksTotalPrice' => $lastThreeWeeksTotalPrice,
-            'currentWeekQuantity' => $currentWeekQuantity,
-            'lastWeekQuantity' => $lastWeekQuantity,
-            'lastTwoWeeksQuantity' => $lastTwoWeeksQuantity,
-            'lastThreeWeeksQuantity' => $lastThreeWeeksQuantity,
-            'lastMonthTotalPrice' => $lastMonthTotalPrice,
-            'lastMonthQuantity' => $lastMonthQuantity,
+            'totalPerMinggu' => $totalPerMinggu,
+            'totalPer4Minggu' => $totalPer4Minggu,
+            'qtyPerMinggu' => $qtyPerMinggu,
+            'qtyPer4Minggu' => $qtyPer4Minggu,
             'internals' => $internals,
         ];
         // Mengonversi array menjadi format JSON
         return $data;
+    }
+    public function summary(Request $request)
+    {
+        $internalSelects = $request->input('internalSelects');
+        $qtyListPerUser = $request->input('qtyListPerUser');
+        $dateFrom = $request->input('dateFrom');
+        $dateTo = $request->input('dateTo');
+        $dateTo = date('Y-m-d', strtotime($dateTo . ' +1 day'));
+        $data = [];
+        foreach ($internalSelects as $internal) {
+            $results = DB::table('penawarans')
+                ->select(DB::raw("DATE_FORMAT(tgl, '%W, %e %M %Y, %H:%i:%s') tgl"), 't.nama as Team', 'internals.nama as Internal', 'c.nama as Customer', 'penawarans.uri as uri', 'perusahaans.nama as Perusahaan', DB::raw('SUM(products_has_penawarans.total_price) as Total'))
+                ->join('internals', 'penawarans.internals_id', '=', 'internals.id')
+                ->join('teams as t', 't.id', '=', 'penawarans.teams_id')
+                ->join('customers as c', 'c.id', '=', 'penawarans.customers_id')
+                ->join('perusahaans', 'perusahaans.id', '=', 'c.perusahaans_id')
+                ->join('products_has_penawarans', 'products_has_penawarans.penawarans_id', '=', 'penawarans.id')
+                ->where('internals.id', $internal)
+                ->whereBetween('penawarans.tgl', [$dateFrom, $dateTo])
+                ->groupBy('penawarans.id', 'penawarans.tgl', 't.nama', 'internals.nama', 'c.nama', 'penawarans.uri', 'perusahaans.nama')
+                ->orderByDesc('Total')
+                ->limit($qtyListPerUser)
+                ->get();
+            foreach ($results as $result) {
+                $data[] = [
+                    'tgl' => $result->tgl,
+                    'Team' => $result->Team,
+                    'Internal' => $result->Internal,
+                    'Customer' => $result->Customer,
+                    'uri' => $result->uri,
+                    'Perusahaan' => $result->Perusahaan,
+                    'Total' => $result->Total,
+                ];
+            }
+        }
+        return json_encode($data);
     }
 }

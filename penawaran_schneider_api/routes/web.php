@@ -38,6 +38,7 @@ Route::middleware([InternalMiddleware::class])->group(function () {
     Route::post('/api/buat_penawaran', [PenawaranController::class, 'store']);
     Route::post('/api/update_penawaran', [PenawaranController::class, 'update']);
     Route::post('/api/dashboard', [PenawaranController::class, 'dashboard']);
+    Route::post('/api/summary', [PenawaranController::class, 'summary']);
 
 
     Route::get('/api/product', [ProductController::class, 'index']);

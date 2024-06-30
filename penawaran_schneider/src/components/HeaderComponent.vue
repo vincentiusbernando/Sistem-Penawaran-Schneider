@@ -6,12 +6,22 @@
     </div> -->
 
     <div class="navbar_content">
-      <img src="" alt="profile" class="profile" />
+      <h1 class="text-white">{{ nama }}</h1> <!-- Bind to the nama data property -->
     </div>
   </nav>
 </template>
+
 <script>
 export default {
   name: "HeaderComponent",
+  data() {
+    return {
+      nama: localStorage.getItem("nama") || "Default Name", // Access localStorage in data
+    };
+  },
 };
 </script>
+
+<style>
+/* Your component styles */
+</style>

@@ -6,6 +6,9 @@
 
 <script>
 import { Chart } from "chart.js/auto";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+
+Chart.register(ChartDataLabels);
 
 export default {
   props: {
@@ -37,8 +40,30 @@ export default {
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          legend: {
-            position: "right",
+          plugins: {
+            legend: {
+              position: "right",
+            },
+            datalabels: {
+              color: "#fff",
+              anchor: "end",
+              align: "start",
+              offset: 10,
+              borderWidth: 2,
+              borderColor: "#fff",
+              backgroundColor: (context) => {
+                return context.dataset.backgroundColor;
+              },
+              formatter: (value, context) => {
+                let sum = 0;
+                let dataArr = context.chart.data.datasets[0].data;
+                dataArr.map(data => {
+                  sum += data;
+                });
+                let percentage = ((value / sum) * 100).toFixed(2) + '%';
+                return percentage;
+              },
+            },
           },
         },
       });
@@ -46,14 +71,15 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .chart-container {
-  width: 18rem;
+  width: 28rem;
   height: 18rem;
 }
 
 .pie-chart {
-  width: 100%;
-  height: 100%;
+  width: 90%;
+  height: 90%;
 }
 </style>

@@ -2,27 +2,28 @@
   <nav class="sidebar close hoverable shadow">
     <div class="menu_content">
       <ul class="menu_items">
-        <!-- duplicate or remove this li tag if you want to add or remove navlink with submenu -->
-        <!-- start -->
-        <a href="/internal" class="nav_link submenu_item">
-          <span class="navlink_icon">
-            <i class="bx bx-home-alt"></i>
-          </span>
-          <span class="navlink">Internal</span>
-        </a>
-        <!-- end -->
+        <!-- Internal Link -->
+        <li class="item">
+          <a href="/internal" class="nav_link submenu_item">
+            <span class="navlink_icon">
+              <i class="bx bx-home-alt"></i>
+            </span>
+            <span class="navlink">Internal</span>
+          </a>
+        </li>
 
-        <!-- duplicate this li tag if you want to add or remove  navlink with submenu -->
-        <!-- start -->
-        <a href="/dashboard" class="nav_link submenu_item">
-          <span class="navlink_icon">
-            <i class="bx bxs-dashboard"></i>
-          </span>
-          <span class="navlink">Dashboard</span>
-        </a>
-        <!-- end -->
+        <!-- Dashboard Link (conditionally rendered for admin role) -->
+        <li class="item" v-if="isAdmin">
+          <a href="/dashboard" class="nav_link submenu_item">
+            <span class="navlink_icon">
+              <i class="bx bxs-dashboard"></i>
+            </span>
+            <span class="navlink">Dashboard</span>
+          </a>
+        </li>
       </ul>
 
+      <!-- Other Menu Items -->
       <ul class="menu_items">
         <li class="item">
           <a href="/product" class="nav_link">
@@ -32,8 +33,6 @@
             <span class="navlink">Product</span>
           </a>
         </li>
-        <!-- End -->
-
         <li class="item">
           <a href="/sd" class="nav_link">
             <span class="navlink_icon">
@@ -72,14 +71,21 @@ import Drawer from "./Drawer";
 
 export default {
   name: "DrawerComponent",
+  data() {
+    return {
+      isAdmin: localStorage.getItem("akses") == "admin",
+    };
+  },
   mounted() {
     Drawer.init();
   },
   methods: {
     logout() {
       localStorage.removeItem("sessionToken");
+      localStorage.removeItem("nama");
       localStorage.removeItem("role");
-      window.location.href = "/";
+      localStorage.removeItem("akses");
+      this.$router.push("/"); // Use Vue Router for navigation
     },
   },
 };

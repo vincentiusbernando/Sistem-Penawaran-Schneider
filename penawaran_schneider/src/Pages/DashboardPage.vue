@@ -3,94 +3,77 @@
     <HeaderComponent></HeaderComponent>
     <DrawerComponent></DrawerComponent>
     <div class="page text-center">
-      <h1 class="py-4 text-3xl">Total Nilai Penawaran 4 Minggu Terakhir</h1>
+      <h1 class="py-4 text-3xl">Total Nilai Penawaran</h1>
       <div class="flex justify-center">
         <div
           class="rounded-lg border shadow border-gray-300 py-4 px-3 bg-white items-center"
         >
-          <h1 class="text-center">3 Minggu Lalu</h1>
-          <pie-chart :chartData="pieChartlastThreeWeeksTotalPrice" />
+          <h1 class="text-center text-3xl">Per Minggu</h1>
+          <pie-chart :chartData="pieChartTotalPerMinggu" />
         </div>
         <div
           class="rounded-lg border shadow border-gray-300 py-4 px-3 bg-white items-center"
         >
-          <h1 class="text-center">2 Minggu Lalu</h1>
-          <pie-chart :chartData="pieChartlastTwoWeeksTotalPrice" />
-        </div>
-        <div
-          class="rounded-lg border shadow border-gray-300 py-4 px-3 bg-white items-center"
-        >
-          <h1 class="text-center">1 Minggu Lalu</h1>
-          <pie-chart :chartData="pieChartlastWeekTotalPrice" />
-        </div>
-        <div
-          class="rounded-lg border shadow border-gray-300 py-4 px-3 bg-white items-center"
-        >
-          <h1 class="text-center">Minggu Ini</h1>
-          <pie-chart :chartData="pieChartcurrentWeekTotalPrice" />
+          <h1 class="text-center text-3xl">Per 4 Minggu</h1>
+          <pie-chart :chartData="pieChartTotalPer4Minggu" />
         </div>
       </div>
-      <h1 class="py-4 text-3xl">Quantity Penawaran 4 Minggu Terakhir</h1>
+      <h1 class="py-4 text-3xl">Quantity Penawaran</h1>
       <div class="flex justify-center">
         <div
           class="rounded-lg border shadow border-gray-300 py-4 px-3 bg-white items-center"
         >
-          <h1 class="text-center">3 Minggu Lalu</h1>
-          <pie-chart :chartData="pieChartlastThreeWeeksQuantity" />
+          <h1 class="text-center text-3xl">Per Minggu</h1>
+          <pie-chart :chartData="pieChartQtyPerMinggu" />
         </div>
         <div
           class="rounded-lg border shadow border-gray-300 py-4 px-3 bg-white items-center"
         >
-          <h1 class="text-center">2 Minggu Lalu</h1>
-          <pie-chart :chartData="pieChartlastTwoWeeksQuantity" />
-        </div>
-        <div
-          class="rounded-lg border shadow border-gray-300 py-4 px-3 bg-white items-center"
-        >
-          <h1 class="text-center">1 Minggu Lalu</h1>
-          <pie-chart :chartData="pieChartlastWeekQuantity" />
-        </div>
-        <div
-          class="rounded-lg border shadow border-gray-300 py-4 px-3 bg-white items-center"
-        >
-          <h1 class="text-center">Minggu Ini</h1>
-          <pie-chart :chartData="pieChartcurrentWeekQuantity" />
-        </div>
-      </div>
-      <h1 class="py-4 text-3xl">1 Bulan Terakhir</h1>
-      <div class="flex justify-center">
-        <div
-          class="rounded-lg border shadow border-gray-300 py-4 px-3 bg-white items-center"
-        >
-          <h1 class="text-center">Total Price</h1>
-          <pie-chart :chartData="pieChartlastMonthTotalPrice" />
-        </div>
-        <div
-          class="rounded-lg border shadow border-gray-300 py-4 px-3 bg-white items-center"
-        >
-          <h1 class="text-center">Quantity</h1>
-          <pie-chart :chartData="pieChartlastMonthQuantity" />
+          <h1 class="text-center text-3xl">Per 4 Minggu</h1>
+          <pie-chart :chartData="pieChartQtyPer4Minggu" />
         </div>
       </div>
       <div class="px-4 mt-8">
         <div class="shadow rounded-lg border bg-white">
           <h1 class="text-3xl py-2 mt-6">Summary Internal</h1>
-          <div class="py-2 px-4 flex justify-center" style="align-items: start;">
-            <div class="flex items-center py-2 px-4">
-              <h1>User Internal</h1>
-              <select
-                id="internals-select"
-                v-model="selectedInternal"
-                class="px-4 py-2 shadow rounded"
+          <div class="py-2 px-4 flex justify-center" style="align-items: start">
+            <div class="flex" style="flex-direction: column">
+              <div
+                v-for="(internalSelect, index) in internalSelects"
+                :key="index"
               >
-                <option
-                  v-for="internal in internals"
-                  :key="internal.id"
-                  :value="internal.id"
+                <div class="flex items-center py-2 px-4">
+                  <h1>User Internal</h1>
+                  <select
+                    :id="'internals-select-' + index"
+                    v-model="internalSelect.selectedInternal"
+                    class="px-4 py-2 shadow rounded"
+                  >
+                    <option
+                      v-for="internal in internals"
+                      :key="internal.id"
+                      :value="internal.id"
+                    >
+                      {{ internal.nama }}
+                    </option>
+                  </select>
+                  <button
+                    @click="removeSelect(index)"
+                    class="delete text-white rounded px-4 py-2"
+                  >
+                    x
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex items-center py-2 px-4 justify-end">
+                <button
+                  @click="addSelect"
+                  class="bg-green-600 text-white font-bold px-3 py-2 rounded shadow-md"
                 >
-                  {{ internal.nama }}
-                </option>
-              </select>
+                  Tambah
+                </button>
+              </div>
             </div>
             <div class="flex items-center py-2 px-4">
               <h1>Qty List Appear Per User</h1>
@@ -99,6 +82,7 @@
                 class="px-4 py-2 shadow rounded"
                 min="1"
                 value="1"
+                v-model="qtyAppear"
               />
             </div>
             <div class="text-left">
@@ -130,10 +114,9 @@
               </button>
             </div>
           </div>
-          <div class="px-4 py-2">
+          <div class="px-4 py-2" v-if="summaryLength > 0">
             <table
-              class="min-w-full rounded-lg overflow-hidden mt-4 bg-white shadow-md"
-              v-if="summary"
+              class="min-w-full rounded-lg overflow-hidden mt-4 bg-white shadow-md text-sm "
             >
               <thead>
                 <tr class="bg-green-600 text-white">
@@ -146,10 +129,22 @@
               </thead>
               <tbody>
                 <tr
-                  v-for="row in data"
-                  :key="row.id"
+                  v-for="row in summary"
+                  :key="row.uri"
                   class="border-t border-gray-200 hover:bg-gray-200"
-                ></tr>
+                >
+                  <td class="px-4 py-2 text-left">{{ row.Internal }}</td>
+
+                  <td
+                    class="px-4 py-2 text-green-600 font-bold"
+                    data-label="Detail"
+                  >
+                    <a :href="'/internal/' + row.uri" target="_blank">Detail</a>
+                  </td>
+                  <td class="px-4 py-2 text-left">{{ row.tgl }}</td>
+                  <td class="px-4 py-2 text-left">{{ row.Perusahaan }}</td>
+                  <td class="px-4 py-2 text-left">{{ row.Total }}</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -163,11 +158,12 @@
 import HeaderComponent from "../components/HeaderComponent.vue";
 import DrawerComponent from "../components/DrawerComponent.vue";
 import PieChart from "../components/PieChart.vue";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
+// import { v4 as uuidv4 } from "uuid";
 import AuthService from "@/AuthService";
 
 let dashboard = ref([]);
-let pieChartcurrentWeekTotalPrice = ref({
+let pieChartTotalPerMinggu = ref({
   labels: [],
   datasets: [
     {
@@ -175,7 +171,7 @@ let pieChartcurrentWeekTotalPrice = ref({
     },
   ],
 });
-let pieChartlastWeekTotalPrice = ref({
+let pieChartTotalPer4Minggu = ref({
   labels: [],
   datasets: [
     {
@@ -183,7 +179,7 @@ let pieChartlastWeekTotalPrice = ref({
     },
   ],
 });
-let pieChartlastTwoWeeksTotalPrice = ref({
+let pieChartQtyPerMinggu = ref({
   labels: [],
   datasets: [
     {
@@ -191,56 +187,7 @@ let pieChartlastTwoWeeksTotalPrice = ref({
     },
   ],
 });
-let pieChartlastThreeWeeksTotalPrice = ref({
-  labels: [],
-  datasets: [
-    {
-      data: [],
-    },
-  ],
-});
-
-let pieChartcurrentWeekQuantity = ref({
-  labels: [],
-  datasets: [
-    {
-      data: [],
-    },
-  ],
-});
-let pieChartlastWeekQuantity = ref({
-  labels: [],
-  datasets: [
-    {
-      data: [],
-    },
-  ],
-});
-let pieChartlastTwoWeeksQuantity = ref({
-  labels: [],
-  datasets: [
-    {
-      data: [],
-    },
-  ],
-});
-let pieChartlastThreeWeeksQuantity = ref({
-  labels: [],
-  datasets: [
-    {
-      data: [],
-    },
-  ],
-});
-let pieChartlastMonthTotalPrice = ref({
-  labels: [],
-  datasets: [
-    {
-      data: [],
-    },
-  ],
-});
-let pieChartlastMonthQuantity = ref({
+let pieChartQtyPer4Minggu = ref({
   labels: [],
   datasets: [
     {
@@ -249,149 +196,79 @@ let pieChartlastMonthQuantity = ref({
   ],
 });
 const internals = ref([]);
-const selectedInternal = ref(null);
+const internalSelects = ref([{ selectedInternal: null }]);
 const today = new Date().toISOString().split("T")[0];
 const dateFrom = ref(today);
 const dateTo = ref(today);
-let summary = null;
+let summary = ref([]);
+let summaryLength = computed(() => summary.value.length);
+let qtyAppear = 1;
 async function fetchSummary() {
   try {
     const formData = new FormData();
+    internalSelects.value.forEach((internalSelect) => {
+      formData.append(`internalSelects[]`, internalSelect.selectedInternal);
+    });
+    formData.append("qtyListPerUser", qtyAppear);
+    formData.append("dateFrom", dateFrom.value);
+    formData.append("dateTo", dateTo.value);
     const response = await AuthService.summary(formData);
-    summary = response.data.summary;
-    console.log(response);
+    summary.value = response.data;
+    console.log(summary);
   } catch (error) {
     console.error("Error:", error);
   }
+}
+function addSelect() {
+  internalSelects.value.push({ selectedInternal: null });
+}
+
+// Function to remove a select element
+function removeSelect(index) {
+  internalSelects.value.splice(index, 1);
 }
 onMounted(async () => {
   try {
     const response = await AuthService.dashboard();
     dashboard.value = response.data;
     internals.value = response.data.internals;
-    if (response.data.lastThreeWeeksTotalPrice.length > 0) {
-      pieChartlastThreeWeeksTotalPrice.value = {
-        labels: response.data.lastThreeWeeksTotalPrice.map(
-          (entry) => entry.customer
-        ),
+    if (response.data.totalPerMinggu.length > 0) {
+      pieChartTotalPerMinggu.value = {
+        labels: response.data.totalPerMinggu.map((entry) => entry.customer),
         datasets: [
           {
-            data: response.data.lastThreeWeeksTotalPrice.map(
-              (entry) => entry.total
-            ),
+            data: response.data.totalPerMinggu.map((entry) => entry.total),
           },
         ],
       };
     }
-    if (response.data.lastThreeWeeksQuantity.length > 0) {
-      pieChartlastThreeWeeksQuantity.value = {
-        labels: response.data.lastThreeWeeksQuantity.map(
-          (entry) => entry.customer
-        ),
+    if (response.data.totalPer4Minggu.length > 0) {
+      pieChartTotalPer4Minggu.value = {
+        labels: response.data.totalPer4Minggu.map((entry) => entry.customer),
         datasets: [
           {
-            data: response.data.lastThreeWeeksQuantity.map(
-              (entry) => entry.total
-            ),
+            data: response.data.totalPer4Minggu.map((entry) => entry.total),
           },
         ],
       };
     }
 
-    if (response.data.lastTwoWeeksTotalPrice.length > 0) {
-      pieChartlastTwoWeeksTotalPrice.value = {
-        labels: response.data.lastTwoWeeksTotalPrice.map(
-          (entry) => entry.customer
-        ),
+    if (response.data.qtyPerMinggu.length > 0) {
+      pieChartQtyPerMinggu.value = {
+        labels: response.data.qtyPerMinggu.map((entry) => entry.customer),
         datasets: [
           {
-            data: response.data.lastTwoWeeksTotalPrice.map(
-              (entry) => entry.total
-            ),
+            data: response.data.qtyPerMinggu.map((entry) => entry.total),
           },
         ],
       };
     }
-
-    if (response.data.lastTwoWeeksQuantity.length > 0) {
-      pieChartlastTwoWeeksQuantity.value = {
-        labels: response.data.lastTwoWeeksQuantity.map(
-          (entry) => entry.customer
-        ),
+    if (response.data.qtyPer4Minggu.length > 0) {
+      pieChartQtyPer4Minggu.value = {
+        labels: response.data.qtyPer4Minggu.map((entry) => entry.customer),
         datasets: [
           {
-            data: response.data.lastTwoWeeksQuantity.map(
-              (entry) => entry.total
-            ),
-          },
-        ],
-      };
-    }
-
-    if (response.data.lastWeekTotalPrice.length > 0) {
-      pieChartlastWeekTotalPrice.value = {
-        labels: response.data.lastWeekTotalPrice.map((entry) => entry.customer),
-        datasets: [
-          {
-            data: response.data.lastWeekTotalPrice.map((entry) => entry.total),
-          },
-        ],
-      };
-    }
-    if (response.data.lastWeekQuantity.length > 0) {
-      pieChartlastWeekQuantity.value = {
-        labels: response.data.lastWeekQuantity.map((entry) => entry.customer),
-        datasets: [
-          {
-            data: response.data.lastWeekQuantity.map((entry) => entry.total),
-          },
-        ],
-      };
-    }
-    if (response.data.currentWeekTotalPrice.length > 0) {
-      pieChartcurrentWeekTotalPrice.value = {
-        labels: response.data.currentWeekTotalPrice.map(
-          (entry) => entry.customer
-        ),
-        datasets: [
-          {
-            data: response.data.currentWeekTotalPrice.map(
-              (entry) => entry.total
-            ),
-          },
-        ],
-      };
-    }
-    if (response.data.currentWeekQuantity.length > 0) {
-      pieChartcurrentWeekQuantity.value = {
-        labels: response.data.currentWeekQuantity.map(
-          (entry) => entry.customer
-        ),
-        datasets: [
-          {
-            data: response.data.currentWeekQuantity.map((entry) => entry.total),
-          },
-        ],
-      };
-    }
-    if (response.data.lastMonthTotalPrice.length > 0) {
-      pieChartlastMonthTotalPrice.value = {
-        labels: response.data.lastMonthTotalPrice.map(
-          (entry) => entry.customer
-        ),
-        datasets: [
-          {
-            data: response.data.lastMonthTotalPrice.map((entry) => entry.total),
-          },
-        ],
-      };
-    }
-    if (response.data.lastMonthQuantity.length > 0) {
-      pieChartlastMonthQuantity.value = {
-        labels: response.data.lastMonthQuantity.map((entry) => entry.customer),
-        datasets: [
-          {
-            data: response.data.lastMonthQuantity.map((entry) => entry.total),
+            data: response.data.qtyPer4Minggu.map((entry) => entry.total),
           },
         ],
       };
