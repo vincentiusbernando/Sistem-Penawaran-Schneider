@@ -11,6 +11,10 @@ import Penawaran_baru from "./Pages/Penawaran_baru.vue";
 import ProductPage from "./Pages/ProductPage.vue";
 import SDPage from "./Pages/SDPage.vue";
 import Product_baru from "./Pages/Product_baru.vue";
+import Customer_baru from "./Pages/Customer_baru.vue";
+import UploadCustomer from "./Pages/UploadCustomer.vue";
+import UploadProduct from "./Pages/UploadProduct.vue";
+import UpdateStock from "./Pages/UpdateStock.vue";
 // import axios from "axios";
 // import { API_URL } from "./constants";
 const routes = [
@@ -47,8 +51,33 @@ const routes = [
     meta: { requiresInternalAuth: true },
   },
   {
+    path: "/product/:by/:query",
+    component: ProductPage,
+    meta: { requiresInternalAuth: true },
+  },
+  {
+    path: "/update_stock",
+    component: UpdateStock,
+    meta: { requiresInternalAuth: true },
+  },
+  {
     path: "/product_baru",
     component: Product_baru,
+    meta: { requiresInternalAuth: true },
+  },
+  {
+    path: "/upload_product_baru",
+    component: UploadProduct,
+    meta: { requiresInternalAuth: true },
+  },
+  {
+    path: "/customer_baru",
+    component: Customer_baru,
+    meta: { requiresInternalAuth: true },
+  },
+  {
+    path: "/upload_customer_baru",
+    component: UploadCustomer,
     meta: { requiresInternalAuth: true },
   },
   { path: "/sd", component: SDPage, meta: { requiresInternalAuth: true } },
@@ -65,11 +94,9 @@ router.beforeEach(async (to, from, next) => {
     const role = localStorage.getItem("role");
     if (sessionToken && role == "internal") {
       next();
-    } 
-    else if (role=="customer"){
+    } else if (role == "customer") {
       next("/customer");
-    }
-    else {
+    } else {
       next("/");
     }
   } else {
@@ -83,11 +110,9 @@ router.beforeEach(async (to, from, next) => {
     const role = localStorage.getItem("role");
     if (sessionToken && role == "customer") {
       next();
-    } 
-    else if (role=="internal"){
+    } else if (role == "internal") {
       next("/internal");
-    }
-    else {
+    } else {
       next("/");
     }
   } else {

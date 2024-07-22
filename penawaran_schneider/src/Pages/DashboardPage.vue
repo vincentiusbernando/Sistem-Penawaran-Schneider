@@ -6,13 +6,13 @@
       <h1 class="py-4 text-3xl">Total Nilai Penawaran</h1>
       <div class="flex justify-center">
         <div
-          class="rounded-lg border shadow border-gray-300 py-4 px-3 bg-white items-center"
+          class="rounded-lg border shadow border-gray-300 py-4 bg-white items-center"
         >
           <h1 class="text-center text-3xl">Per Minggu</h1>
           <pie-chart :chartData="pieChartTotalPerMinggu" />
         </div>
         <div
-          class="rounded-lg border shadow border-gray-300 py-4 px-3 bg-white items-center"
+          class="rounded-lg border shadow border-gray-300 py-4 bg-white items-center"
         >
           <h1 class="text-center text-3xl">Per 4 Minggu</h1>
           <pie-chart :chartData="pieChartTotalPer4Minggu" />
@@ -21,13 +21,13 @@
       <h1 class="py-4 text-3xl">Quantity Penawaran</h1>
       <div class="flex justify-center">
         <div
-          class="rounded-lg border shadow border-gray-300 py-4 px-3 bg-white items-center"
+          class="rounded-lg border shadow border-gray-300 py-4 bg-white items-center"
         >
           <h1 class="text-center text-3xl">Per Minggu</h1>
           <pie-chart :chartData="pieChartQtyPerMinggu" />
         </div>
         <div
-          class="rounded-lg border shadow border-gray-300 py-4 px-3 bg-white items-center"
+          class="rounded-lg border shadow border-gray-300 py-4 bg-white items-center"
         >
           <h1 class="text-center text-3xl">Per 4 Minggu</h1>
           <pie-chart :chartData="pieChartQtyPer4Minggu" />

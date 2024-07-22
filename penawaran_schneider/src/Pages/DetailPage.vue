@@ -51,82 +51,179 @@
           </div>
         </div>
       </div>
-      <table
-        class="min-w-full rounded-lg overflow-hidden mt-4 bg-white shadow-md"
-      >
-        <thead>
-          <tr class="bg-green-600 text-white">
-            <th style="width: 5%" class="px-4 py-2">Ref</th>
-            <th style="width: 10%" class="px-4 py-2">Description</th>
-            <th style="width: 5%" class="px-4 py-2">Quantity</th>
-            <th style="width: 5%" class="px-4 py-2">Unit Price</th>
-            <th style="width: 5%" class="px-4 py-2">Total Price</th>
-            <th style="width: 5%" class="px-4 py-2">Delivery Time</th>
-            <th style="width: 7%" class="px-4 py-2">Remarks</th>
-            <th style="width: 5%" class="px-4 py-2">Standard Discount</th>
-            <th style="width: 6%" class="px-4 py-2">Additional Discount</th>
-            <th style="width: 5%" class="px-4 py-2">Cash Discount</th>
-            <th style="width: 4%" class="px-4 py-2">Coef</th>
-            <th style="width: 4%" class="px-4 py-2">PL Excel</th>
-            <th style="width: 4%" class="px-4 py-2">PL After Coef</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="(row, index) in data"
-            :key="row.id"
-            class="border-t border-gray-200 hover:bg-gray-200"
-          >
-            <td class="px-4 py-2" data-label="Ref">
-              {{ row.ref }}
-            </td>
-            <td class="px-4 py-2" data-label="Description">
-              {{ row.description }}
-            </td>
-            <td class="px-4 py-2" data-label="Quantity">
-              {{ row.quantity }}
-            </td>
-            <td class="px-4 py-2" data-label="Unit Price">
-              {{ row.unit_price }}
-            </td>
-            <td class="px-4 py-2" data-label="Total Price">
-              {{ row.total_price }}
-            </td>
-            <td data-label="Delivery Time">
-              <input
-                class="px-3 py-2"
-                v-model="row.delivery_time"
-                @input="markModified(row.id, index, 'delivery_time')"
-              />
-            </td>
-            <td data-label="Remarks">
-              <input
-                class="px-3 py-2"
-                v-model="row.remarks"
-                @input="markModified(row.id, index, 'remarks')"
-              />
-            </td>
-            <td class="px-4 py-2" data-label="Standard Discount">
-              {{ row.standard_discount }}%
-            </td>
-            <td class="px-4 py-2" data-label="Additional Discount">
-              {{ row.additional_discount }}%
-            </td>
-            <td class="px-4 py-2" data-label="Cash Discount">
-              {{ row.cash_discount }}%
-            </td>
-            <td class="px-4 py-2" data-label="Coef">
-              {{ row.coef }}
-            </td>
-            <td class="px-4 py-2" data-label="PL Excel">
-              {{ row.price_list_excl }}
-            </td>
-            <td class="px-4 py-2" data-label="PL After Coef">
-              {{ row.pl_aft_coef }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="text-white py-2 flex justify-end">
+        <button
+          class="bg-green-600 text-white font-bold px-3 py-2 rounded shadow-md"
+          @click="addRow"
+        >
+          Tambah Barang
+        </button>
+      </div>
+      <div style="position: relative">
+        <table
+          class="min-w-full rounded-lg mt-4 bg-white shadow-md overflow-hidden"
+          v-if="tableReady"
+        >
+          <thead>
+            <tr class="bg-green-600 text-white">
+              <th style="width: 5%" class="px-3 py-2"></th>
+              <th style="width: 15%" class="px-3 py-2">Ref</th>
+              <th style="width: 20%" class="px-3 py-2">Description</th>
+              <th style="width: 6%" class="px-3 py-2">Qty</th>
+              <th style="width: 8%" class="px-3 py-2">Unit <br />Price</th>
+              <th style="width: 8%" class="px-3 py-2">Total<br />Price</th>
+              <th style="width: 8%" class="px-3 py-2">Del. Time</th>
+              <th style="width: 10%" class="px-3 py-2">Remarks</th>
+              <th style="width: 6%" class="px-3 py-2">SD <br />(%)</th>
+              <th style="width: 6%" class="px-3 py-2">AD<br />(%)</th>
+              <th style="width: 6%" class="px-3 py-2">CD<br />(%)</th>
+              <th style="width: 8%" class="px-3 py-2">PL <br />Excel</th>
+              <th style="width: 6%" class="px-3 py-2">Coef</th>
+              <th style="width: 8%" class="px-3 py-2">
+                PL<br />After <br />Coef
+              </th>
+              <th style="width: 8%" class="px-3 py-2">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(item, index) in items"
+              :key="item.id"
+              class="border-t border-gray-200"
+            >
+              <td class="text-center">
+                <button
+                  class="bg-green-600 text-white rounded px-3"
+                  @click="addRowBetween(index + 1)"
+                >
+                  +
+                </button>
+              </td>
+              <td data-label="Ref">
+                <div class="autocomplete">
+                  <input
+                    :id="'searchInput-' + item.id"
+                    type="text"
+                    v-model="searchTextArray[index].text"
+                    @input="search(index)"
+                    placeholder="Search..."
+                    class="px-3 py-2 border border-gray-300 rounded w-full"
+                  />
+                  <div
+                    :id="'searchResults-' + item.id"
+                    v-if="
+                      searchResults[index] &&
+                      searchResults[index].results.length > 0
+                    "
+                    class="autocomplete-items bg-white border border-gray-300 rounded mt-2"
+                  >
+                    <div
+                      v-for="result in searchResults[index].results"
+                      :key="result.id"
+                      class="autocomplete-item px-3 py-2 hover-text hover:bg-gray-200"
+                      @click="selectItem(result, index)"
+                    >
+                      {{ result.ref }}
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-3 py-2" data-label="Description">
+                {{ item.description }}
+              </td>
+              <td data-label="Quantity">
+                <input
+                  class="px-3 py-2 border border-gray-300 rounded w-full"
+                  type="number"
+                  step="1"
+                  min="1"
+                  v-model="item.quantity"
+                  @input="updateRow(item)"
+                />
+              </td>
+              <td class="px-3 py-2" data-label="Unit Price">
+                {{ item.unitPrice }}
+              </td>
+              <td class="px-3 py-2" data-label="Total Price">
+                {{ item.totalPrice }}
+              </td>
+              <td data-label="Delivery Time">
+                <input
+                  class="px-3 py-2 border border-gray-300 rounded w-full"
+                  v-model="item.deliveryTime"
+                />
+              </td>
+              <td data-label="Remarks">
+                <input
+                  class="px-3 py-2 border border-gray-300 rounded w-full"
+                  v-model="item.remarks"
+                />
+              </td>
+              <td data-label="Standard Discount">
+                <input
+                  class="px-3 py-2 border border-gray-300 rounded w-full"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  v-model="item.standardDiscount"
+                  @input="updateRow(item)"
+                />
+              </td>
+              <td data-label="Additional Discount">
+                <input
+                  class="px-3 py-2 border border-gray-300 rounded w-full"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  v-model="item.additionalDiscount"
+                  @input="updateRow(item)"
+                />
+              </td>
+              <td data-label="Cash Discount">
+                <input
+                  class="px-3 py-2 border border-gray-300 rounded w-full"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  v-model="item.cashDiscount"
+                  @input="updateRow(item)"
+                />
+              </td>
+              <td class="px-3 py-2" data-label="PL Excel">
+                {{ item.plExcel }}
+              </td>
+              <td data-label="Coef">
+                <input
+                  class="px-3 py-2 border border-gray-300 rounded w-full"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  v-model="item.coef"
+                  @input="updateRow(item)"
+                />
+              </td>
+              <td data-label="PL After Coef">
+                <input
+                  class="px-3 py-2 border border-gray-300 rounded w-full"
+                  v-model="item.plAfterCoef"
+                  readonly
+                />
+              </td>
+              <td class="text-center">
+                <button
+                  class="delete text-white rounded px-3 py-1"
+                  @click="deleteRow(item.id)"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="py-2 text-3xl flex justify-end">
+        <h1>Total: Rp. {{ grandTotal }}</h1>
+      </div>
     </div>
   </div>
 </template>
@@ -134,76 +231,214 @@
 <script setup>
 import HeaderComponent from "../components/HeaderComponent";
 import DrawerComponent from "../components/DrawerComponent";
-import { ref, computed } from "vue";
-import { useRoute } from "vue-router";
+import { reactive, ref } from "vue";
+import { v4 as uuidv4 } from "uuid";
 import AuthService from "@/AuthService";
 import { useToast } from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
-
-const $toast = useToast();
-const data = ref([]);
+import { onMounted } from "vue";
+import { useRoute } from "vue-router";
 const head = ref({});
-const modifiedRows = ref([]);
+var data;
 const route = useRoute();
-
+const searchTextArray = ref([]);
+const searchResults = ref([]);
+var standard_discount = 0;
+var additional_discount = 0;
+var grandTotal = 0;
+const $toast = useToast();
+const items = reactive([]);
+var tableReady = ref(false);
 const fetchData = async () => {
   try {
     const response = await AuthService.detailPenawaranInternal(
       route.params.uri
     );
-    data.value = response.data.data;
     head.value = response.data.head[0];
-    console.log(data.value[0].id);
+    standard_discount = head.value.standard_discount;
+    additional_discount = head.value.additional_discount;
+
+    data = response.data.data;
+    tableReady.value = false;
+    items.splice(0, items.length);
+    searchTextArray.value.splice(0, searchTextArray.value.length);
+    searchResults.value.splice(0, searchResults.value.length);
+    for (const item of data) {
+      searchTextArray.value.push({ id: uuidv4(), text: item.ref });
+      searchResults.value.push({ id: uuidv4(), results: [] });
+      items.push({
+        id: uuidv4(),
+        dbID: item.id,
+        ref: item.ref,
+        description: item.description,
+        quantity: item.quantity,
+        deliveryTime: item.delivery_time,
+        remarks: item.remarks,
+        standardDiscount: item.standard_discount,
+        additionalDiscount: item.additional_discount,
+        cashDiscount: item.cash_discount,
+        coef: item.coef,
+        plExcel: item.price_list_excl,
+        plAfterCoef: item.pl_aft_coef,
+        unitPrice: item.unit_price,
+        totalPrice: item.total_price,
+      });
+    }
+    tableReady.value = true;
+    updateGrandTotal()
   } catch (error) {
     console.error("Error fetching data:", error);
   }
 };
 fetchData();
-const Refresh=()=>{
+onMounted(() => {
+  console.log(data);
+});
+const Refresh = () => {
   fetchData();
-  $toast.success("Refreshed", { position: "top" });
 };
 
-const markModified = (id, rowIndex, fieldName) => {
-  const modifiedEntry = {
-    row: id,
-    field: fieldName,
-    value: data.value[rowIndex][fieldName],
-  };
-  const existingEntry = modifiedRows.value.find(
-    (entry) => entry.row === id && entry.field === fieldName
-  );
-  if (existingEntry) {
-    existingEntry.value = modifiedEntry.value;
-  } else {
-    modifiedRows.value.push(modifiedEntry);
+items.forEach(() => {
+  searchTextArray.value.push({ id: uuidv4(), text: "" });
+  searchResults.value.push({ id: uuidv4(), results: [] });
+});
+
+async function search(index) {
+  if (!searchTextArray.value[index].text) {
+    searchTextArray.value[index].text = "";
   }
-};
 
-const saveModifiedRows = () => {
-  const processedData = computed(() => {
-    return modifiedRows.value.reduce((result, item) => {
-      const existingRow = result.find((row) => row.row === item.row);
-      if (existingRow) {
-        existingRow.fields.push({ [item.field]: item.value });
-      } else {
-        result.push({ row: item.row, fields: [{ [item.field]: item.value }] });
-      }
-      return result;
-    }, []);
-  });
-  const id_penawaran = head.value.id;
-  const jsonData = JSON.stringify(processedData.value);
-  console.log(jsonData);
-  updatePenawaran(id_penawaran, jsonData);
-};
-async function updatePenawaran(id_penawaran, jsonData) {
+  if (searchTextArray.value[index].text.length > 0) {
+    try {
+      const response = await AuthService.searchProductRef(
+        searchTextArray.value[index].text
+      );
+      const data = await response.data;
+      searchResults.value[index].results = data;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  } else {
+    searchResults.value[index].results = [];
+  }
+}
+
+async function selectItem(item, index) {
+  searchTextArray.value[index].text = item.ref;
+  searchResults.value[index].results = [];
   try {
-    const response = await AuthService.updatePenawaran(id_penawaran, jsonData);
-    console.log(response);
-    $toast.success("Successfully updated", { position: "top" });
+    const response = await AuthService.searchProductRef(
+      searchTextArray.value[index].text
+    );
+    const data = await response.data;
+    console.log(data);
+    items[index].ref = data[0].ref;
+    items[index].description = data[0].description;
+    items[index].plExcel = data[0].price;
+    items[index].dbID = data[0].id;
+    updateRow(items[index]);
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching data:", error);
+  }
+}
+
+function updateRow(item) {
+  if (item.plExcel !== "" && item.coef !== "") {
+    item.plAfterCoef = parseInt(item.plExcel * item.coef);
+    item.unitPrice = parseInt(
+      (item.plAfterCoef *
+        (100 -
+          item.standardDiscount -
+          item.additionalDiscount -
+          item.cashDiscount)) /
+        100
+    );
+    item.totalPrice = item.unitPrice * item.quantity;
+    updateGrandTotal();
+  } else {
+    item.plAfterCoef = 0;
+  }
+}
+function updateGrandTotal() {
+  grandTotal = 0;
+  for (let index = 0; index < items.length; index++) {
+    grandTotal += items[index].totalPrice;
+  }
+}
+
+function addRow() {
+  items.push({
+    id: uuidv4(),
+    dbID: 0,
+    ref: "",
+    description: "",
+    quantity: "1",
+    deliveryTime: "",
+    remarks: "",
+    standardDiscount: standard_discount,
+    additionalDiscount: additional_discount,
+    cashDiscount: "0",
+    coef: 1,
+    plExcel: 0,
+    plAfterCoef: 0,
+    unitPrice: "",
+    totalPrice: "",
+  });
+  searchTextArray.value.push({ id: uuidv4(), text: "" });
+  searchResults.value.push({ id: uuidv4(), results: [] });
+}
+function addRowBetween(index) {
+  items.splice(index, 0, {
+    id: uuidv4(),
+    dbID: 0,
+    ref: "",
+    description: "",
+    quantity: "1",
+    deliveryTime: "",
+    remarks: "",
+    standardDiscount: standard_discount,
+    additionalDiscount: additional_discount,
+    cashDiscount: 0,
+    coef: 1,
+    plExcel: 0,
+    plAfterCoef: 0,
+    unitPrice: "",
+    totalPrice: "",
+  });
+  searchTextArray.value.splice(index, 0, { id: uuidv4(), text: "" });
+  searchResults.value.splice(index, 0, { id: uuidv4(), results: [] });
+}
+
+function deleteRow(id) {
+  const index = items.findIndex((item) => item.id === id);
+  if (index !== -1) {
+    items.splice(index, 1);
+    searchTextArray.value.splice(index, 1);
+    searchResults.value.splice(index, 1);
+    updateGrandTotal();
+  }
+}
+async function saveModifiedRows() {
+  try {
+    if (items.length > 0) {
+      const formData = new FormData();
+      items.forEach((item) => {
+        console.log(item);
+        formData.append("products[]", JSON.stringify(item));
+        if (item.dbID == 0) {
+          throw new Error("Terdapat Kesalahan pada Produk yang Ditambahkan");
+        }
+      });
+      formData.append("penawarans_id", head.value.id);
+      await AuthService.updatePenawaran(formData);
+      $toast.success("Saved", { position: "top" });
+      Refresh();
+    } else {
+      throw new Error("Isi Produk Dalam Penawaran Terlebih Dahulu");
+    }
+  } catch (error) {
+    console.error("Error submitting penawaran:", error);
+    $toast.error(error, { position: "top" });
   }
 }
 </script>

@@ -5,6 +5,7 @@ use App\Http\Controllers\CustomerLoginController;
 use App\Http\Controllers\InternalLoginController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PenawaranController;
+use App\Http\Controllers\PerusahaanController;
 use App\Http\Controllers\StandardDiscountController;
 use App\Http\Middleware\CustomerMiddleware;
 use App\Http\Middleware\InternalMiddleware;
@@ -41,10 +42,20 @@ Route::middleware([InternalMiddleware::class])->group(function () {
     Route::post('/api/summary', [PenawaranController::class, 'summary']);
 
 
+    Route::get('/api/perusahaan', [PerusahaanController::class, 'index']);
+    Route::post('/api/buat_perusahaan', [PerusahaanController::class, 'store']);
+
+    Route::post('/api/buat_customer', [CustomerController::class, 'store']);
+    Route::post('/api/upload_customer', [CustomerController::class, 'upload']);
+
+
+
     Route::get('/api/product', [ProductController::class, 'index']);
     Route::get('/api/search_product', [ProductController::class, 'search_ref']);
-    Route::get('/product/{by}/{query}', [ProductController::class, 'search_product']);
+    Route::get('/api/product/{by}/{query}', [ProductController::class, 'search_product']);
     Route::post('/api/buat_product', [ProductController::class, 'store']);
+    Route::post('/api/upload_product', [ProductController::class, 'upload']);
+    Route::post('/api/update_stock', [ProductController::class, 'update_stock']);
 
 
     Route::get('/api/sd', [StandardDiscountController::class, 'index']);

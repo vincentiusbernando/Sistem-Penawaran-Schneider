@@ -26,7 +26,7 @@ class Internal extends Authenticatable implements JWTSubject
     }
     public function getAuthIdentifierName()
     {
-        return 'username';
+        return 'email';
     }
 
     /**

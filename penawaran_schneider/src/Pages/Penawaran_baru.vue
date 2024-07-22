@@ -45,24 +45,24 @@
           <thead>
             <tr class="bg-green-600 text-white">
               <th style="width: 5%" class="px-3 py-2"></th>
-              <th style="width: 10%" class="px-3 py-2">Ref</th>
+              <th style="width: 15%" class="px-3 py-2">Ref</th>
               <th style="width: 20%" class="px-3 py-2">Description</th>
-              <th style="width: 9%" class="px-3 py-2">Quantity</th>
+              <th style="width: 6%" class="px-3 py-2">Qty</th>
               <th style="width: 8%" class="px-3 py-2">Unit <br />Price</th>
               <th style="width: 8%" class="px-3 py-2">Total<br />Price</th>
-              <th style="width: 8%" class="px-3 py-2">Delivery<br />Time</th>
+              <th style="width: 8%" class="px-3 py-2">Del. Time</th>
               <th style="width: 10%" class="px-3 py-2">Remarks</th>
-              <th style="width: 9%" class="px-3 py-2">
-                Standard <br />Discount <br />(%)
+              <th style="width: 6%" class="px-3 py-2">
+                SD <br />(%)
               </th>
-              <th style="width: 9%" class="px-3 py-2">
-                Additional <br />Discount<br />(%)
+              <th style="width: 6%" class="px-3 py-2">
+                AD<br />(%)
               </th>
-              <th style="width: 9%" class="px-3 py-2">
-                Cash <br />Discount<br />(%)
+              <th style="width: 6%" class="px-3 py-2">
+                CD<br />(%)
               </th>
-              <th style="width: 7%" class="px-3 py-2">Coef</th>
               <th style="width: 8%" class="px-3 py-2">PL <br />Excel</th>
+              <th style="width: 6%" class="px-3 py-2">Coef</th>
               <th style="width: 8%" class="px-3 py-2">
                 PL<br />After <br />Coef
               </th>
@@ -173,6 +173,9 @@
                   @input="updateRow(item)"
                 />
               </td>
+              <td class="px-3 py-2" data-label="PL Excel">
+                {{ item.plExcel }}
+              </td>
               <td data-label="Coef">
                 <input
                   class="px-3 py-2 border border-gray-300 rounded w-full"
@@ -182,9 +185,6 @@
                   v-model="item.coef"
                   @input="updateRow(item)"
                 />
-              </td>
-              <td class="px-3 py-2" data-label="PL Excel">
-                {{ item.plExcel }}
               </td>
               <td data-label="PL After Coef">
                 <input

@@ -74,8 +74,8 @@ export default {
 
 <style scoped>
 .chart-container {
-  width: 28rem;
-  height: 18rem;
+  width: 40rem;
+  height: 15rem;
 }
 
 .pie-chart {

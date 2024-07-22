@@ -4,21 +4,23 @@
 
   <div class="page">
     <div class="px-4">
-      <h1 class="text-3xl py-2 font-bold">Tambah Produk</h1>
+      <div class="flex justify-between items-center">
+        <h1 class="text-3xl py-2 font-bold">Tambah Produk</h1>
+        <router-link to="/upload_product_baru">
+          <button
+            class="bg-green-600 text-white font-bold px-4 py-2 rounded shadow-md"
+            router
+          >
+            Upload Produk
+          </button>
+        </router-link>
+      </div>
       <form @submit.prevent="submitForm">
         <div class="mb-4">
           <label for="ref" class="block text-gray-700">Reference</label>
           <input
             type="text"
             id="ref"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-        <div class="mb-4">
-          <label for="material" class="block text-gray-700">Material</label>
-          <input
-            type="text"
-            id="material"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
@@ -66,11 +68,7 @@
             class="shadow rounded w-full py-2 px-3 text-gray-700 overflow-auto"
             size="1"
           >
-            <option
-              v-for="option in sd"
-              :key="option.mpg"
-              :value="option.mpg"
-            >
+            <option v-for="option in sd" :key="option.mpg" :value="option.mpg">
               {{ option.mpg }} - {{ option.basic_disc }}%
             </option>
           </select>
@@ -154,7 +152,6 @@ onMounted(async () => {
 const submitForm = () => {
   const formData = {
     ref: document.getElementById("ref").value,
-    material: document.getElementById("material").value,
     description: document.getElementById("description").value,
     price: document.getElementById("price").value,
     bu: document.getElementById("bu").value,

@@ -14,6 +14,7 @@ class Customer extends Authenticatable implements JWTSubject
 
     protected $table = "customers";
     protected $primaryKey = "id";
+    public $timestamps = false;
     protected $hidden = [
         'password',
     ];

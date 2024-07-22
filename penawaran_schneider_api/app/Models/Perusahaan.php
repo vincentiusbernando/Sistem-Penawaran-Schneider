@@ -10,6 +10,7 @@ class Perusahaan extends Model
 {
     use HasFactory;
     protected $table="perusahaans";
+    public $timestamps = false;
     protected $primaryKey="id";
     public function customers():HasMany{
         return $this->hasMany(Customer::class);

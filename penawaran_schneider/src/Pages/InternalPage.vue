@@ -9,11 +9,18 @@
   <div class="page">
     <div class="px-4 py-2">
       <div class="py-2 justify-between flex">
-        <a href="/penawaran_baru">
-          <button class="bg-green-600 text-white font-bold px-4 py-2 rounded shadow-md">
-            Buat Penawaran
-          </button>
-        </a>
+        <div>
+          <a href="/penawaran_baru">
+            <button class="bg-green-600 text-white font-bold px-4 py-2 rounded shadow-md">
+              Buat Penawaran
+            </button>
+          </a>
+          <a href="/customer_baru">
+            <button class="bg-green-600 text-white font-bold px-4 py-2 rounded shadow-md ml-2">
+              Tambah Customer
+            </button>
+          </a>
+        </div>
         <button
           class="bg-green-600 text-white font-bold px-4 py-2 rounded items-center flex shadow-md"
           @click="Refresh"

@@ -129,7 +129,7 @@ class PenawaranController extends Controller
             ->join('teams as t', 'penawarans.teams_id', '=', 't.id')
             ->join('customers as c', 'penawarans.customers_id', '=', 'c.id')
             ->join('perusahaans as p', 'p.id', '=', 'c.perusahaans_id')
-            ->select(DB::raw("DATE_FORMAT(tgl, '%W, %e %M %Y, %H:%i:%s') tgl"), "t.nama as Team", "internals.nama as Internal", "c.nama as Customer", "t.id as teams_id", "penawarans.id", "p.nama as Perusahaan")
+            ->select(DB::raw("DATE_FORMAT(tgl, '%W, %e %M %Y, %H:%i:%s') tgl"), "t.nama as Team", "internals.nama as Internal", "c.nama as Customer", "t.id as teams_id", "penawarans.id", "p.nama as Perusahaan", "p.standard_discount as standard_discount", "p.additional_discount as additional_discount")
             ->where('penawarans.uri', '=', $uri)
             ->get();
         return json_encode(["data" => $data, "head" => $head]);
@@ -152,35 +152,43 @@ class PenawaranController extends Controller
     public function update(Request $request)
     {
         //
-        $jsonData = $request->input('jsonData');
-        $id_penawaran = $request->input('id_penawaran');
-        $data = json_decode($jsonData, true);
+        $penawarans_id = $request->input('penawarans_id');
         DB::beginTransaction();
-        // try {
-        foreach ($data as $item) {
-            $products_id = $item['row'];
-            $fields = $item['fields'];
-
-            $updateData = [];
-            foreach ($fields as $field) {
-                foreach ($field as $columnName => $value) {
-                    $updateData[$columnName] = $value;
-                }
-            }
-
-            DB::table('products_has_penawarans')
-                ->where('penawarans_id', $id_penawaran)
-                ->where('products_id', $products_id)
-                ->update($updateData);
+        DB::table('products_has_penawarans')
+            ->where('penawarans_id', $penawarans_id)
+            ->delete();
+        $values = [];
+        foreach ($request->input('products') as $itemData) {
+            $data = json_decode($itemData);
+            $values[] = sprintf(
+                "(%d, %d, %d, %f, %f, '%s', '%s', %f, %f, %f, %f, %f, %f)",
+                $data->dbID,
+                $penawarans_id,
+                $data->quantity,
+                $data->unitPrice,
+                $data->totalPrice,
+                $data->deliveryTime,
+                $data->remarks,
+                $data->standardDiscount,
+                $data->additionalDiscount,
+                $data->cashDiscount,
+                $data->coef,
+                $data->plAfterCoef,
+                $data->plExcel
+            );
         }
+
+        // Execute the raw SQL query to insert data into products_has_penawarans table
+        $query = sprintf(
+            "INSERT INTO products_has_penawarans (products_id, penawarans_id, quantity, unit_price, total_price, delivery_time, remarks, standard_discount, additional_discount, cash_discount, coef, pl_aft_coef, price_list_excl) VALUES %s",
+            implode(',', $values)
+        );
+
+        DB::statement($query);
 
         DB::commit();
 
         return response()->json(['message' => 'Data updated successfully']);
-        // } catch (\Exception $e) {
-        //     DB::rollBack();
-        //     return response()->json(['message' => $fields], 500);
-        // }
     }
 
     /**

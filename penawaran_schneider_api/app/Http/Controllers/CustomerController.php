@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\Perusahaan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class CustomerController extends Controller
 {
@@ -30,6 +32,75 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         //
+        $customer = new Customer();
+        $customer->nama = $request->input('nama');
+        $customer->email = $request->input('email');
+        $customer->password = bcrypt($request->input('password'));
+        $customer->handphone = $request->input('handphone');
+        $customer->perusahaans_id = $request->input('perusahaans_id');
+        $customer->save();
+        return response()->json([
+            'result' => "success",
+            'message' => 'Customer berhasil ditambahkan',
+            'data' => $customer
+        ]);
+    }
+    public function upload(Request $request)
+    {
+        // Validate file input
+        $request->validate([
+            'file' => 'required|mimes:xlsx'
+        ]);
+
+        // Get file from request
+        $file = $request->file('file');
+        $filePath = $file->getRealPath();
+
+        // Load the spreadsheet
+        $spreadsheet = IOFactory::load($filePath);
+        $worksheet = $spreadsheet->getActiveSheet();
+        $rows = $worksheet->toArray();
+
+        // Initialize array to store customer data
+        $customers = [];
+
+        // Process each row
+        foreach ($rows as $key => $row) {
+            // Skip header row
+            if ($key === 0) {
+                continue;
+            }
+
+            $customerData = [
+                'nama' => $row[0],
+                'email' => $row[1],
+                'handphone' => $row[2],
+                'nama_perusahaan' => $row[3]
+            ];
+
+            // Find company by name
+            $perusahaan = Perusahaan::where("nama", $customerData['nama_perusahaan'])->first();
+
+            if ($perusahaan) {
+                // Create new customer object
+                $customer = new Customer();
+                $customer->nama = $customerData['nama'];
+                $customer->email = $customerData['email'];
+                $customer->password = bcrypt("123");
+                $customer->handphone = $customerData['handphone'];
+                $customer->perusahaans_id = $perusahaan->id;
+                $customer->save();
+
+                // Add customer to array
+                $customers[] = $customer;
+            }
+        }
+
+        return response()->json([
+            'result' => "success",
+            'message' => 'Customers berhasil diupload',
+            'data' => $customers
+        ]);
     }
 
     /**

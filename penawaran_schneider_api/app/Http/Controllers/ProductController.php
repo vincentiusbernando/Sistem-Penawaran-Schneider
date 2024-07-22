@@ -7,6 +7,7 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class ProductController extends Controller
 {
@@ -47,7 +48,6 @@ class ProductController extends Controller
 
             $product = new Product();
             $product->ref = $request->input('ref');
-            $product->material = $request->input('material');
             $product->description = $request->input('description');
             $product->price = $request->input('price');
             $product->bu = $request->input('bu');
@@ -117,5 +117,116 @@ class ProductController extends Controller
             $data = Product::where('description', 'like', "$query%")->get();
         }
         return $data;
+    }
+
+    public function upload(Request $request)
+    {
+        // Validate file input
+        $request->validate([
+            'file' => 'required|mimes:xlsx'
+        ]);
+
+        // Get file from request
+        $file = $request->file('file');
+        $filePath = $file->getRealPath();
+
+        // Load the spreadsheet
+        $spreadsheet = IOFactory::load($filePath);
+        $worksheet = $spreadsheet->getActiveSheet();
+        $rows = $worksheet->toArray();
+
+        // Initialize array to store product data
+        // $products = [];
+
+        // Process each row
+        foreach ($rows as $key => $row) {
+            // Skip header row
+            if ($key === 0) {
+                continue;
+            }
+
+            $productData = [
+                'ref' => $row[0],
+                'description' => $row[1],
+                'price' => $row[2],
+                'bu' => $row[3],
+                'activity' => $row[4],
+                'standard_discounts_mpg' => $row[5],
+                'type' => $row[6],
+                'sub_type' => $row[7],
+                'time' => $row[8],
+                'activity_detail' => $row[9],
+                'stock' => 0,
+            ];
+
+            // Create new product object
+            $product = new Product();
+            $product->ref = $productData['ref'];
+            $product->description = $productData['description'];
+            $product->price = $productData['price'];
+            $product->bu = $productData['bu'];
+            $product->activity = $productData['activity'];
+            $product->standard_discounts_mpg = $productData['standard_discounts_mpg'];
+            $product->type = $productData['type'];
+            $product->sub_type = $productData['sub_type'];
+            $product->time = $productData['time'];
+            $product->activity_detail = $productData['activity_detail'];
+            $product->stock = $productData['stock'];
+            $product->save();
+
+            // Add product to array
+            // $products[] = $product;
+        }
+
+        return response()->json([
+            'result' => "success",
+            'message' => 'products berhasil diupload',
+            // 'data' => $products
+        ]);
+    }
+
+    public function update_stock(Request $request)
+    {
+        // Validate file input
+        $request->validate([
+            'file' => 'required|mimes:xlsx'
+        ]);
+
+        // Get file from request
+        $file = $request->file('file');
+        $filePath = $file->getRealPath();
+
+        // Load the spreadsheet
+        $spreadsheet = IOFactory::load($filePath);
+        $worksheet = $spreadsheet->getActiveSheet();
+        $rows = $worksheet->toArray();
+
+        // Initialize array to store product data
+        $products = [];
+
+        // Process each row
+        foreach ($rows as $key => $row) {
+            // Skip header row
+            if ($key === 0) {
+                continue;
+            }
+
+            $productData = [
+                'ref' => $row[0],
+                'stock' => $row[1],
+            ];
+            // Create new product object
+            $product = Product::where("ref", "=", $productData['ref'])->first();
+            $product->stock = $productData['stock'];
+            $product->save();
+            // Add product to array
+            $products[] = $product;
+        }
+
+        return response()->json([
+            'result' => "success",
+            'message' => 'stock products berhasil diupdate',
+            'data' => $products
+        ]);
     }
 }

@@ -11,11 +11,11 @@ class CustomerLoginController extends Controller
     public function authenticate(Request $request)
     {
         $request->validate([
-            'username' => 'required',
+            'email' => 'required',
             'password' => 'required',
         ]);
         $credentials = [
-            'username' => $request->input('username'),
+            'email' => $request->input('email'),
             'password' => $request->input('password')
         ];
 

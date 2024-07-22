@@ -35,14 +35,24 @@ table {
               </label>
             </div>
           </div>
-          <router-link to="/product_baru">
-            <button
-              class="bg-green-600 text-white font-bold px-4 py-2 rounded shadow-md"
-              router
-            >
-              Tambah Produk
-            </button>
-          </router-link>
+          <div class="flex">
+            <router-link to="/product_baru">
+              <button
+                class="bg-green-600 text-white font-bold px-4 py-2 rounded shadow-md"
+                router
+              >
+                Tambah Produk
+              </button>
+            </router-link>
+            <router-link to="/update_stock">
+              <button
+                class="ml-2 bg-green-600 text-white font-bold px-4 py-2 rounded shadow-md"
+                router
+              >
+                Update Stock
+              </button>
+            </router-link>
+          </div>
         </div>
         <div class="flex w-full mt-4">
           <input
@@ -66,7 +76,6 @@ table {
           <tr class="bg-green-600 text-white">
             <th style="width: 2%" class="px-4 py-2">ID</th>
             <th style="width: 5%" class="px-4 py-2">Ref</th>
-            <th style="width: 5%" class="px-4 py-2">Material</th>
             <th style="width: 10%" class="px-4 py-2">Description</th>
             <th style="width: 4%" class="px-4 py-2">Price</th>
             <th style="width: 3%" class="px-4 py-2">BU</th>
@@ -88,9 +97,6 @@ table {
             <td class="px-4 py-2" data-label="ID">{{ row.id }}</td>
             <td class="px-4 py-2" data-label="Ref">
               {{ row.ref }}
-            </td>
-            <td class="px-4 py-2" data-label="Material">
-              {{ row.material }}
             </td>
             <td class="px-4 py-2" data-label="Description">
               {{ row.description }}
@@ -131,20 +137,31 @@ table {
 import HeaderComponent from "../components/HeaderComponent";
 import DrawerComponent from "../components/DrawerComponent";
 import { onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
 import AuthService from "@/AuthService";
 const data = ref([]);
-
+const route = useRoute();
+const searchOption = ref("ref");
+const searchQuery = ref("");
 onMounted(async () => {
   try {
-    const response = await AuthService.product(); // Add await here
+    var response;
+    if (route.params.by && route.params.query) {
+      response = await AuthService.searchProduct(
+        route.params.by,
+        route.params.query
+      );
+      searchOption.value=route.params.by;
+      searchQuery.value=route.params.query;
+    } else {
+      response = await AuthService.product();
+    }
     data.value = response.data;
-    console.log(data.value); // Make sure data is fetched, use data.value
+    console.log(data.value);
   } catch (error) {
     console.error("Error fetching data:", error);
   }
 });
-const searchOption = ref("ref");
-const searchQuery = ref("");
 
 const submitForm = () => {
   const radioButtonSelect = searchOption.value;
