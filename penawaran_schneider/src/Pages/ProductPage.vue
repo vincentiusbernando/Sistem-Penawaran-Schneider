@@ -35,7 +35,7 @@ table {
               </label>
             </div>
           </div>
-          <div class="flex">
+          <div class="flex" v-if="isAdmin">
             <router-link to="/product_baru">
               <button
                 class="bg-green-600 text-white font-bold px-4 py-2 rounded shadow-md"
@@ -139,6 +139,7 @@ import DrawerComponent from "../components/DrawerComponent";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import AuthService from "@/AuthService";
+var isAdmin = localStorage.getItem("akses") == "admin";
 const data = ref([]);
 const route = useRoute();
 const searchOption = ref("ref");
@@ -151,8 +152,8 @@ onMounted(async () => {
         route.params.by,
         route.params.query
       );
-      searchOption.value=route.params.by;
-      searchQuery.value=route.params.query;
+      searchOption.value = route.params.by;
+      searchQuery.value = route.params.query;
     } else {
       response = await AuthService.product();
     }

@@ -116,7 +116,7 @@
           </div>
           <div class="px-4 py-2" v-if="summaryLength > 0">
             <table
-              class="min-w-full rounded-lg overflow-hidden mt-4 bg-white shadow-md text-sm "
+              class="min-w-full rounded-lg overflow-hidden mt-4 bg-white shadow-md text-sm"
             >
               <thead>
                 <tr class="bg-green-600 text-white">
@@ -159,8 +159,10 @@ import HeaderComponent from "../components/HeaderComponent.vue";
 import DrawerComponent from "../components/DrawerComponent.vue";
 import PieChart from "../components/PieChart.vue";
 import { onMounted, ref, computed } from "vue";
-// import { v4 as uuidv4 } from "uuid";
 import AuthService from "@/AuthService";
+if (localStorage.getItem("akses") != "admin") {
+  window.location.href = `/internal`;
+}
 
 let dashboard = ref([]);
 let pieChartTotalPerMinggu = ref({

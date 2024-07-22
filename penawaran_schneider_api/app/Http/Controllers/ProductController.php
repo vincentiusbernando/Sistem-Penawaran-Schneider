@@ -36,6 +36,11 @@ class ProductController extends Controller
     {
         $token = $request->bearerToken();
         $decodedToken = JWT::decode($token, new Key(env('JWT_SECRET'), 'HS256'));
+        if ($decodedToken->user->role != 'admin') {
+            abort(403, 'Unauthorized action.');
+        }
+        $token = $request->bearerToken();
+        $decodedToken = JWT::decode($token, new Key(env('JWT_SECRET'), 'HS256'));
         if ($decodedToken->user->role == "admin") {
             // Check if the ref is already used
             $existingProduct = Product::where('ref', $request->input('ref'))->first();
@@ -121,6 +126,11 @@ class ProductController extends Controller
 
     public function upload(Request $request)
     {
+        $token = $request->bearerToken();
+        $decodedToken = JWT::decode($token, new Key(env('JWT_SECRET'), 'HS256'));
+        if ($decodedToken->user->role != 'admin') {
+            abort(403, 'Unauthorized action.');
+        }
         // Validate file input
         $request->validate([
             'file' => 'required|mimes:xlsx'
@@ -187,6 +197,11 @@ class ProductController extends Controller
 
     public function update_stock(Request $request)
     {
+        $token = $request->bearerToken();
+        $decodedToken = JWT::decode($token, new Key(env('JWT_SECRET'), 'HS256'));
+        if ($decodedToken->user->role != 'admin') {
+            abort(403, 'Unauthorized action.');
+        }
         // Validate file input
         $request->validate([
             'file' => 'required|mimes:xlsx'

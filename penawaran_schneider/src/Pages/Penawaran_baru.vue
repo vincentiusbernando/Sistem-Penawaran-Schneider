@@ -228,7 +228,9 @@ import { v4 as uuidv4 } from "uuid";
 import AuthService from "@/AuthService";
 import { useToast } from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
-
+if (localStorage.getItem("akses") == "spv"){
+  window.location.href = `/internal`;
+}
 const searchTextArray = ref([]);
 const searchResults = ref([]);
 var customer_id;

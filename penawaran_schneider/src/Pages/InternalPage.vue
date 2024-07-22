@@ -1,7 +1,7 @@
 <style scoped>
-  table{
-    font-size: 100%;
-  }
+table {
+  font-size: 100%;
+}
 </style>
 <template>
   <HeaderComponent></HeaderComponent>
@@ -10,13 +10,17 @@
     <div class="px-4 py-2">
       <div class="py-2 justify-between flex">
         <div>
-          <a href="/penawaran_baru">
-            <button class="bg-green-600 text-white font-bold px-4 py-2 rounded shadow-md">
+          <a href="/penawaran_baru" v-if="!isSpv">
+            <button
+              class="bg-green-600 text-white font-bold px-4 py-2 rounded shadow-md"
+            >
               Buat Penawaran
             </button>
           </a>
-          <a href="/customer_baru">
-            <button class="bg-green-600 text-white font-bold px-4 py-2 rounded shadow-md ml-2">
+          <a href="/customer_baru" v-if="!isSpv">
+            <button
+              class="bg-green-600 text-white font-bold px-4 py-2 rounded shadow-md ml-2"
+            >
               Tambah Customer
             </button>
           </a>
@@ -73,6 +77,7 @@ import AuthService from "@/AuthService";
 import { useToast } from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
 
+var isSpv = localStorage.getItem("akses") == "spv";
 const $toast = useToast();
 
 // Define a reactive variable for data
@@ -87,7 +92,7 @@ const fetchData = async () => {
   }
 };
 
-const Refresh=()=>{
+const Refresh = () => {
   fetchData();
   $toast.success("Refreshed", { position: "top" });
 };

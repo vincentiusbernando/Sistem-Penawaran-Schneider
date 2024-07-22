@@ -54,7 +54,9 @@ import HeaderComponent from "@/components/HeaderComponent.vue";
 import DrawerComponent from "@/components/DrawerComponent.vue";
 import { ref } from "vue";
 import AuthService from "@/AuthService";
-
+if (localStorage.getItem("akses") == "spv"){
+  window.location.href = `/internal`;
+}
 const selectedFile = ref(null);
 
 const handleFileChange = (event) => {

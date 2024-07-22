@@ -134,6 +134,9 @@ import HeaderComponent from "@/components/HeaderComponent.vue";
 import DrawerComponent from "@/components/DrawerComponent.vue";
 import { useToast } from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
+if (localStorage.getItem("akses") != "admin"){
+  window.location.href = `/product`;
+}
 
 const $toast = useToast();
 

@@ -142,7 +142,9 @@ import HeaderComponent from "@/components/HeaderComponent.vue";
 import DrawerComponent from "@/components/DrawerComponent.vue";
 import { useToast } from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
-
+if (localStorage.getItem("akses") == "spv"){
+  window.location.href = `/internal`;
+}
 const $toast = useToast();
 
 let perusahaan = ref([]);

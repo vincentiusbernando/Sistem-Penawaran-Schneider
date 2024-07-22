@@ -40,7 +40,7 @@
               <p class="ml-2">Refresh</p>
             </button>
           </div>
-          <div>
+          <div v-if="teams_id == head.teams_id || isAdmin">
             <button
               class="bg-green-600 text-white font-bold px-4 py-2 rounded ml-2 items-center flex"
               @click="saveModifiedRows"
@@ -51,7 +51,10 @@
           </div>
         </div>
       </div>
-      <div class="text-white py-2 flex justify-end">
+      <div
+        class="text-white py-2 flex justify-end"
+        v-if="teams_id == head.teams_id || isAdmin"
+      >
         <button
           class="bg-green-600 text-white font-bold px-3 py-2 rounded shadow-md"
           @click="addRow"
@@ -66,7 +69,11 @@
         >
           <thead>
             <tr class="bg-green-600 text-white">
-              <th style="width: 5%" class="px-3 py-2"></th>
+              <th
+                style="width: 5%"
+                class="px-3 py-2"
+                v-if="teams_id == head.teams_id || isAdmin"
+              ></th>
               <th style="width: 15%" class="px-3 py-2">Ref</th>
               <th style="width: 20%" class="px-3 py-2">Description</th>
               <th style="width: 6%" class="px-3 py-2">Qty</th>
@@ -82,7 +89,13 @@
               <th style="width: 8%" class="px-3 py-2">
                 PL<br />After <br />Coef
               </th>
-              <th style="width: 8%" class="px-3 py-2">Action</th>
+              <th
+                style="width: 8%"
+                class="px-3 py-2"
+                v-if="teams_id == head.teams_id || isAdmin"
+              >
+                Action
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -91,7 +104,7 @@
               :key="item.id"
               class="border-t border-gray-200"
             >
-              <td class="text-center">
+              <td class="text-center" v-if="teams_id == head.teams_id || isAdmin">
                 <button
                   class="bg-green-600 text-white rounded px-3"
                   @click="addRowBetween(index + 1)"
@@ -108,6 +121,7 @@
                     @input="search(index)"
                     placeholder="Search..."
                     class="px-3 py-2 border border-gray-300 rounded w-full"
+                    :disabled="teams_id != head.teams_id && !isAdmin"
                   />
                   <div
                     :id="'searchResults-' + item.id"
@@ -139,6 +153,7 @@
                   min="1"
                   v-model="item.quantity"
                   @input="updateRow(item)"
+                  :disabled="teams_id != head.teams_id && !isAdmin"
                 />
               </td>
               <td class="px-3 py-2" data-label="Unit Price">
@@ -151,12 +166,14 @@
                 <input
                   class="px-3 py-2 border border-gray-300 rounded w-full"
                   v-model="item.deliveryTime"
+                  :disabled="teams_id != head.teams_id && !isAdmin"
                 />
               </td>
               <td data-label="Remarks">
                 <input
                   class="px-3 py-2 border border-gray-300 rounded w-full"
                   v-model="item.remarks"
+                  :disabled="teams_id != head.teams_id && !isAdmin"
                 />
               </td>
               <td data-label="Standard Discount">
@@ -167,6 +184,7 @@
                   min="0"
                   v-model="item.standardDiscount"
                   @input="updateRow(item)"
+                  :disabled="teams_id != head.teams_id && !isAdmin"
                 />
               </td>
               <td data-label="Additional Discount">
@@ -177,6 +195,7 @@
                   min="0"
                   v-model="item.additionalDiscount"
                   @input="updateRow(item)"
+                  :disabled="teams_id != head.teams_id && !isAdmin"
                 />
               </td>
               <td data-label="Cash Discount">
@@ -187,6 +206,7 @@
                   min="0"
                   v-model="item.cashDiscount"
                   @input="updateRow(item)"
+                  :disabled="teams_id != head.teams_id && !isAdmin"
                 />
               </td>
               <td class="px-3 py-2" data-label="PL Excel">
@@ -200,6 +220,7 @@
                   min="0"
                   v-model="item.coef"
                   @input="updateRow(item)"
+                  :disabled="teams_id != head.teams_id && !isAdmin"
                 />
               </td>
               <td data-label="PL After Coef">
@@ -207,9 +228,10 @@
                   class="px-3 py-2 border border-gray-300 rounded w-full"
                   v-model="item.plAfterCoef"
                   readonly
+                  :disabled="teams_id != head.teams_id && !isAdmin"
                 />
               </td>
-              <td class="text-center">
+              <td class="text-center" v-if="teams_id == head.teams_id || isAdmin">
                 <button
                   class="delete text-white rounded px-3 py-1"
                   @click="deleteRow(item.id)"
@@ -238,6 +260,9 @@ import { useToast } from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
 import { onMounted } from "vue";
 import { useRoute } from "vue-router";
+
+const teams_id = localStorage.getItem("teams_id");
+const isAdmin=localStorage.getItem("akses") == "admin";
 const head = ref({});
 var data;
 const route = useRoute();
@@ -285,7 +310,7 @@ const fetchData = async () => {
       });
     }
     tableReady.value = true;
-    updateGrandTotal()
+    updateGrandTotal();
   } catch (error) {
     console.error("Error fetching data:", error);
   }

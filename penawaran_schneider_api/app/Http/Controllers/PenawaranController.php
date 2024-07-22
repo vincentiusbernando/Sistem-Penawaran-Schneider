@@ -153,42 +153,49 @@ class PenawaranController extends Controller
     {
         //
         $penawarans_id = $request->input('penawarans_id');
-        DB::beginTransaction();
-        DB::table('products_has_penawarans')
-            ->where('penawarans_id', $penawarans_id)
-            ->delete();
-        $values = [];
-        foreach ($request->input('products') as $itemData) {
-            $data = json_decode($itemData);
-            $values[] = sprintf(
-                "(%d, %d, %d, %f, %f, '%s', '%s', %f, %f, %f, %f, %f, %f)",
-                $data->dbID,
-                $penawarans_id,
-                $data->quantity,
-                $data->unitPrice,
-                $data->totalPrice,
-                $data->deliveryTime,
-                $data->remarks,
-                $data->standardDiscount,
-                $data->additionalDiscount,
-                $data->cashDiscount,
-                $data->coef,
-                $data->plAfterCoef,
-                $data->plExcel
+        $penawaran = Penawaran::where("id", "=", $penawarans_id)->first();
+        $token = $request->bearerToken();
+        $decodedToken = JWT::decode($token, new Key(env('JWT_SECRET'), 'HS256'));
+        if (($decodedToken->user->role == 'admin' || $penawaran->teams_id == $decodedToken->user->teams_id) && $decodedToken->user->role != 'spv') {
+            DB::beginTransaction();
+            DB::table('products_has_penawarans')
+                ->where('penawarans_id', $penawarans_id)
+                ->delete();
+            $values = [];
+            foreach ($request->input('products') as $itemData) {
+                $data = json_decode($itemData);
+                $values[] = sprintf(
+                    "(%d, %d, %d, %f, %f, '%s', '%s', %f, %f, %f, %f, %f, %f)",
+                    $data->dbID,
+                    $penawarans_id,
+                    $data->quantity,
+                    $data->unitPrice,
+                    $data->totalPrice,
+                    $data->deliveryTime,
+                    $data->remarks,
+                    $data->standardDiscount,
+                    $data->additionalDiscount,
+                    $data->cashDiscount,
+                    $data->coef,
+                    $data->plAfterCoef,
+                    $data->plExcel
+                );
+            }
+
+            // Execute the raw SQL query to insert data into products_has_penawarans table
+            $query = sprintf(
+                "INSERT INTO products_has_penawarans (products_id, penawarans_id, quantity, unit_price, total_price, delivery_time, remarks, standard_discount, additional_discount, cash_discount, coef, pl_aft_coef, price_list_excl) VALUES %s",
+                implode(',', $values)
             );
+
+            DB::statement($query);
+
+            DB::commit();
+
+            return response()->json(['message' => 'Data updated successfully']);
+        } else {
+            abort(403, 'Unauthorized action.');
         }
-
-        // Execute the raw SQL query to insert data into products_has_penawarans table
-        $query = sprintf(
-            "INSERT INTO products_has_penawarans (products_id, penawarans_id, quantity, unit_price, total_price, delivery_time, remarks, standard_discount, additional_discount, cash_discount, coef, pl_aft_coef, price_list_excl) VALUES %s",
-            implode(',', $values)
-        );
-
-        DB::statement($query);
-
-        DB::commit();
-
-        return response()->json(['message' => 'Data updated successfully']);
     }
 
     /**
@@ -199,8 +206,13 @@ class PenawaranController extends Controller
         //
     }
 
-    public function dashboard()
+    public function dashboard(Request $request)
     {
+        $token = $request->bearerToken();
+        $decodedToken = JWT::decode($token, new Key(env('JWT_SECRET'), 'HS256'));
+        if ($decodedToken->user->role != 'admin') {
+            abort(403, 'Unauthorized action.');
+        }
         $totalPerMinggu = DB::table('penawarans')
             ->join('products_has_penawarans', 'products_has_penawarans.penawarans_id', '=', 'penawarans.id')
             ->join('customers', 'penawarans.customers_id', '=', 'customers.id')
@@ -248,6 +260,11 @@ class PenawaranController extends Controller
     }
     public function summary(Request $request)
     {
+        $token = $request->bearerToken();
+        $decodedToken = JWT::decode($token, new Key(env('JWT_SECRET'), 'HS256'));
+        if ($decodedToken->user->role != 'admin') {
+            abort(403, 'Unauthorized action.');
+        }
         $internalSelects = $request->input('internalSelects');
         $qtyListPerUser = $request->input('qtyListPerUser');
         $dateFrom = $request->input('dateFrom');

@@ -66,6 +66,9 @@ import DrawerComponent from "@/components/DrawerComponent.vue";
 import { ref } from "vue";
 import AuthService from "@/AuthService";
 
+if (localStorage.getItem("akses") != "admin"){
+  window.location.href = `/product`;
+}
 const selectedFile = ref(null);
 
 const handleFileChange = (event) => {

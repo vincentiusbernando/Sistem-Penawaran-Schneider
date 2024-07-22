@@ -105,7 +105,7 @@ export default {
             localStorage.setItem("sessionToken", response.data.token);
             localStorage.setItem("role", "internal");
             localStorage.setItem("akses", response.data.user.role);
-
+            localStorage.setItem("teams_id", response.data.user.teams_id);
             window.location.href = response.data.redirectUrl;
           } else {
             this.error = true;
