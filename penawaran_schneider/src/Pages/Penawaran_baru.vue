@@ -30,7 +30,15 @@
           </div>
         </div>
       </div>
-      <div class="text-white py-2 flex justify-end">
+      <div class="text-white py-2 flex justify-between">
+        
+        <a href="/customer_baru" v-if="!isSpv">
+            <button
+              class="bg-green-600 text-white font-bold px-4 py-2 rounded shadow-md"
+            >
+              Tambah Customer
+            </button>
+          </a>
         <button
           class="bg-green-600 text-white font-bold px-3 py-2 rounded shadow-md"
           @click="addRow"
@@ -291,7 +299,6 @@ async function selectItem(item, index) {
       searchTextArray.value[index].text
     );
     const data = await response.data;
-    console.log(data);
     items[index].ref = data[0].ref;
     items[index].description = data[0].description;
     items[index].plExcel = data[0].price;
@@ -423,7 +430,7 @@ async function submitPenawaran() {
         const response = await AuthService.submitPenawaran(formData);
         console.log(response);
         $toast.success("Penawaran Berhasil Dibuat", { position: "top" });
-        window.location.href = "/internal";
+        window.history.back();
       } else {
         throw new Error("Isi Produk Dalam Penawaran Terlebih Dahulu");
       }

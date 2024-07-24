@@ -147,8 +147,7 @@ class ProductController extends Controller
 
         // Initialize array to store product data
         // $products = [];
-
-        // Process each row
+        DB::beginTransaction();
         foreach ($rows as $key => $row) {
             // Skip header row
             if ($key === 0) {
@@ -168,7 +167,13 @@ class ProductController extends Controller
                 'activity_detail' => $row[9],
                 'stock' => 0,
             ];
-
+            $existingProduct = Product::where('ref', $productData['ref'])->first();
+            if ($existingProduct) {
+                return response()->json([
+                    'result' => "error",
+                    'message' => 'Ref telah digunakan'
+                ]);
+            }
             // Create new product object
             $product = new Product();
             $product->ref = $productData['ref'];
@@ -188,6 +193,7 @@ class ProductController extends Controller
             // $products[] = $product;
         }
 
+        DB::commit();
         return response()->json([
             'result' => "success",
             'message' => 'products berhasil diupload',

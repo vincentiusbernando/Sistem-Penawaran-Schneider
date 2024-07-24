@@ -98,8 +98,6 @@ export default {
         var response;
         if (this.formData.role === "internal") {
           response = await AuthService.loginInternal(this.formData);
-          console.log("tunggu")
-          console.log(response)
           if (response.data.success) {
             localStorage.setItem("nama", response.data.user.nama);
             localStorage.setItem("sessionToken", response.data.token);

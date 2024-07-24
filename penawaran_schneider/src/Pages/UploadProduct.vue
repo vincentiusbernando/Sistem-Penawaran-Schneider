@@ -66,7 +66,9 @@ import DrawerComponent from "@/components/DrawerComponent.vue";
 import { ref } from "vue";
 import AuthService from "@/AuthService";
 
-if (localStorage.getItem("akses") != "admin"){
+import { useToast } from "vue-toast-notification";
+const $toast = useToast();
+if (localStorage.getItem("akses") != "admin") {
   window.location.href = `/product`;
 }
 const selectedFile = ref(null);
@@ -85,9 +87,12 @@ const submitForm = async () => {
   formData.append("file", selectedFile.value);
 
   try {
-    const response = AuthService.uploadProduct(formData);
-    console.log("File uploaded successfully:", response.data);
-    // window.location.href = `/product`;
+    const response = await AuthService.uploadProduct(formData);
+    if (response.data.result === "success") {
+      window.history.back();
+    } else {
+      $toast.error(response.data.message, { position: "top" });
+    }
   } catch (error) {
     console.error("Error uploading file:", error);
   }

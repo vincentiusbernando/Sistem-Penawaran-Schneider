@@ -158,7 +158,6 @@ onMounted(async () => {
       response = await AuthService.product();
     }
     data.value = response.data;
-    console.log(data.value);
   } catch (error) {
     console.error("Error fetching data:", error);
   }

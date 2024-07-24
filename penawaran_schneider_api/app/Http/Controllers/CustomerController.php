@@ -35,7 +35,8 @@ class CustomerController extends Controller
         $customer = new Customer();
         $customer->nama = $request->input('nama');
         $customer->email = $request->input('email');
-        $customer->password = bcrypt($request->input('password'));
+        // $customer->password = bcrypt($request->input('password'));
+        $customer->password = bcrypt("123");
         $customer->handphone = $request->input('handphone');
         $customer->perusahaans_id = $request->input('perusahaans_id');
         $customer->save();
@@ -136,9 +137,15 @@ class CustomerController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('search');
-        $items = Customer::join('perusahaans', 'customers.perusahaans_id', '=', 'perusahaans.id')
-            ->where('customers.nama', 'like', $query . '%') // Specify the table name
-            ->select(DB::raw('CONCAT(customers.nama, " - ", perusahaans.nama) AS customer_perusahaan'), 'perusahaans.standard_discount', "perusahaans.additional_discount", "customers.id as customer_id")->get();
+        // $items = Customer::join('perusahaans', 'customers.perusahaans_id', '=', 'perusahaans.id')
+        //     ->select(DB::raw('CONCAT(customers.nama, " - ", perusahaans.nama) AS customer_perusahaan'), 'perusahaans.standard_discount', "perusahaans.additional_discount", "customers.id as customer_id")
+        //     ->where('customer_perusahaan', 'like', '%' . $query . '%')->get();
+        $items = DB::table(DB::raw('(SELECT CONCAT(customers.nama, " - ", perusahaans.nama) AS customer_perusahaan, perusahaans.standard_discount, perusahaans.additional_discount, customers.id as customer_id
+    FROM customers
+    JOIN perusahaans ON customers.perusahaans_id = perusahaans.id) as sub'))
+            ->where('customer_perusahaan', 'like', '%' . $query . '%')
+            ->get();
+
         return response()->json($items);
     }
 }

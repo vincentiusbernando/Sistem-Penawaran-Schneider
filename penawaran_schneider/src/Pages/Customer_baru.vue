@@ -42,7 +42,7 @@
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
-        <div class="mb-4">
+        <!-- <div class="mb-4">
           <label for="password" class="block text-gray-700">Password</label>
           <input
             type="password"
@@ -59,7 +59,7 @@
             id="confirm_password"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
-        </div>
+        </div> -->
         <div class="mb-4">
           <label for="perusahaans_id" class="block text-gray-700"
             >Perusahaan</label
@@ -142,7 +142,7 @@ import HeaderComponent from "@/components/HeaderComponent.vue";
 import DrawerComponent from "@/components/DrawerComponent.vue";
 import { useToast } from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
-if (localStorage.getItem("akses") == "spv"){
+if (localStorage.getItem("akses") == "spv") {
   window.location.href = `/internal`;
 }
 const $toast = useToast();
@@ -159,30 +159,29 @@ onMounted(async () => {
 });
 
 const submitFormCustomer = () => {
-  let password = document.getElementById("password").value;
-  let confirm = document.getElementById("confirm_password").value;
-  if (password === confirm) {
-    const formData = {
-      nama: document.getElementById("nama_user").value,
-      email: document.getElementById("email").value,
-      handphone: document.getElementById("handphone").value,
-      password: document.getElementById("password").value,
-      perusahaans_id: document.getElementById("perusahaans_id").value,
-    };
+  // let password = document.getElementById("password").value;
+  // let confirm = document.getElementById("confirm_password").value;
+  // if (password === confirm) {
+  const formData = {
+    nama: document.getElementById("nama_user").value,
+    email: document.getElementById("email").value,
+    handphone: document.getElementById("handphone").value,
+    // password: document.getElementById("password").value,
+    perusahaans_id: document.getElementById("perusahaans_id").value,
+  };
 
-    submitCustomer(formData);
-  } else {
-    $toast.error("Konfirmasi Password Berbeda", { position: "top" });
-  }
+  submitCustomer(formData);
+  // } else {
+  //   $toast.error("Konfirmasi Password Berbeda", { position: "top" });
+  // }
 };
 
 const submitCustomer = async (formData) => {
   try {
-    console.log(formData);
     const response = await AuthService.submitCustomer(formData);
     const { result, message } = response.data;
     if (result === "success") {
-      window.location.href = "/internal";
+      window.history.back();
     } else {
       $toast.error(message, { position: "top" });
     }
@@ -202,7 +201,6 @@ const submitFormPerusahaan = () => {
 
 const submitPerusahaan = async (formData) => {
   try {
-    console.log(formData);
     const response = await AuthService.submitPerusahaan(formData);
     const { result, message } = response.data;
     if (result === "success") {

@@ -50,7 +50,6 @@ onMounted(async () => {
   try {
     const response = await AuthService.standardDiscount(); // Add await here
     data.value = response.data;
-    console.log(data.value); // Make sure data is fetched, use data.value
   } catch (error) {
     console.error("Error fetching data:", error);
   }

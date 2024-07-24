@@ -146,7 +146,6 @@ onMounted(async () => {
   try {
     const response = await AuthService.standardDiscount();
     sd.value = response.data;
-    console.log(sd);
   } catch (error) {
     console.error("Error fetching data:", error);
   }
@@ -173,11 +172,10 @@ const submitForm = () => {
 
 const submitProduct = async (formData) => {
   try {
-    console.log(formData);
     const response = await AuthService.submitProduct(formData);
     const { result, message } = response.data;
     if (result === "success") {
-      window.location.href = "/product";
+      window.history.back();
     } else {
       $toast.error(message, { position: "top" });
     }

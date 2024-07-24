@@ -216,7 +216,6 @@ async function fetchSummary() {
     formData.append("dateTo", dateTo.value);
     const response = await AuthService.summary(formData);
     summary.value = response.data;
-    console.log(summary);
   } catch (error) {
     console.error("Error:", error);
   }

@@ -356,7 +356,6 @@ async function selectItem(item, index) {
       searchTextArray.value[index].text
     );
     const data = await response.data;
-    console.log(data);
     items[index].ref = data[0].ref;
     items[index].description = data[0].description;
     items[index].plExcel = data[0].price;
@@ -448,7 +447,6 @@ async function saveModifiedRows() {
     if (items.length > 0) {
       const formData = new FormData();
       items.forEach((item) => {
-        console.log(item);
         formData.append("products[]", JSON.stringify(item));
         if (item.dbID == 0) {
           throw new Error("Terdapat Kesalahan pada Produk yang Ditambahkan");

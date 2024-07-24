@@ -22,7 +22,7 @@
             <td class="px-4 py-2">...</td>
             <td class="px-4 py-2">...</td>
             <td class="px-4 py-2">...</td>
-            <td class="px-4 py-2">...</td>  
+            <td class="px-4 py-2">...</td>
           </tr>
         </tbody>
       </table>
@@ -36,7 +36,7 @@
           />
         </div>
 
-        <div class="flex justify-end ">
+        <div class="flex justify-end">
           <button
             type="submit"
             class="bg-green-600 text-white font-bold px-4 py-2 mt-4 rounded shadow-md"
@@ -54,7 +54,10 @@ import HeaderComponent from "@/components/HeaderComponent.vue";
 import DrawerComponent from "@/components/DrawerComponent.vue";
 import { ref } from "vue";
 import AuthService from "@/AuthService";
-if (localStorage.getItem("akses") == "spv"){
+
+import { useToast } from "vue-toast-notification";
+const $toast = useToast();
+if (localStorage.getItem("akses") == "spv") {
   window.location.href = `/internal`;
 }
 const selectedFile = ref(null);
@@ -73,9 +76,13 @@ const submitForm = async () => {
   formData.append("file", selectedFile.value);
 
   try {
-    const response = AuthService.uploadCustomer(formData);
-    console.log("File uploaded successfully:", response.data);
-    window.location.href = "/customer_baru";
+    const response = await AuthService.uploadCustomer(formData);
+    if (response.data.result === "success") {
+      window.history.back();
+    } else {
+      $toast.error(response.data.message, { position: "top" });
+    }
+    window.history.back();
   } catch (error) {
     console.error("Error uploading file:", error);
   }
