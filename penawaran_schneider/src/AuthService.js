@@ -14,6 +14,9 @@ export default {
   internal() {
     return axios.get("/api/internal");
   },
+  searchPenawaran(searchOption, searchQuery) {
+    return axios.get("/api/internal/" + searchOption + "/" + searchQuery);
+  },
   dashboard() {
     return axios.post("/api/dashboard");
   },
@@ -32,11 +35,17 @@ export default {
   product() {
     return axios.get("/api/product");
   },
+  product_detail(id) {
+    return axios.get("/api/product/" + id);
+  },
   searchProduct(by, query) {
     return axios.get("/api/product/" + by + "/" + query);
   },
   submitProduct(formData) {
     return axios.post("/api/buat_product", formData);
+  },
+  editProduct(formData) {
+    return axios.post("/api/edit_product", formData);
   },
   uploadProduct(formData) {
     return axios.post("/api/upload_product", formData);
@@ -58,6 +67,9 @@ export default {
   },
   submitPenawaran(formData) {
     return axios.post("/api/buat_penawaran", formData);
+  },
+  getStock(id) {
+    return axios.get("/api/product/stock/" + id);
   },
   summary(formData) {
     return axios.post("/api/summary", formData);

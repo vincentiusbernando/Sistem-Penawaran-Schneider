@@ -64,19 +64,30 @@
           <label for="perusahaans_id" class="block text-gray-700"
             >Perusahaan</label
           >
-          <select
-            id="perusahaans_id"
-            class="shadow rounded w-full py-2 px-3 text-gray-700 overflow-auto"
-            size="1"
-          >
-            <option
-              v-for="option in perusahaan"
-              :key="option.id"
-              :value="option.id"
+          <div>
+            <input
+              id="searchInput"
+              type="text"
+              v-model="searchQuery"
+              @input="search"
+              placeholder="Search..."
+              class="px-3 py-2 border border-gray-300 rounded w-full"
+            />
+            <div
+              id="searchResults"
+              v-if="showDropdown && filteredPerusahaan.length > 0 && searchQuery.length > 0"
+              class="autocomplete-items bg-white border border-gray-300 rounded mt-2"
             >
-              {{ option.nama }}
-            </option>
-          </select>
+              <div
+                v-for="option in filteredPerusahaan"
+                :key="option.id"
+                class="autocomplete-item px-3 py-2 hover-text hover:bg-gray-200"
+                @click="selectItem(option)"
+              >
+                {{ option.nama }}
+              </div>
+            </div>
+          </div>
         </div>
         <div class="flex justify-end py-8">
           <button
@@ -137,7 +148,7 @@
 </template>
 <script setup>
 import AuthService from "@/AuthService";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import HeaderComponent from "@/components/HeaderComponent.vue";
 import DrawerComponent from "@/components/DrawerComponent.vue";
 import { useToast } from "vue-toast-notification";
@@ -157,7 +168,26 @@ onMounted(async () => {
     console.error("Error fetching data:", error);
   }
 });
+const searchQuery = ref("");
+const selectedPerusahaan = ref(null);
+const showDropdown = ref(true);
 
+const filteredPerusahaan = computed(() => {
+  const query = searchQuery.value.toLowerCase();
+  return perusahaan.value.filter((option) =>
+    option.nama.toLowerCase().includes(query)
+  );
+});
+
+const search = () => {
+  showDropdown.value = true;
+};
+
+const selectItem = (option) => {
+  selectedPerusahaan.value = option;
+  searchQuery.value = option.nama;
+  showDropdown.value = false;
+};
 const submitFormCustomer = () => {
   // let password = document.getElementById("password").value;
   // let confirm = document.getElementById("confirm_password").value;

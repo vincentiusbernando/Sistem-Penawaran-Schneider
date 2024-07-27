@@ -8,70 +8,47 @@ table {
   <DrawerComponent></DrawerComponent>
   <div class="page">
     <div class="px-4 py-2">
-      <form :action="formAction" method="GET" @submit.prevent="submitForm">
-        <div class="flex justify-between items-center">
-          <div>
-            <h1 class="text-3xl py-2 font-bold">Search by</h1>
-            <div class="flex items-center">
-              <label>
-                <input
-                  type="radio"
-                  v-model="searchOption"
-                  value="ref"
-                  name="searchOption"
-                  class="ml-2"
-                />
-                <span>Ref</span>
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  v-model="searchOption"
-                  value="desc"
-                  name="searchOption"
-                  class="ml-2"
-                />
-                <span>Description</span>
-              </label>
-            </div>
-          </div>
-          <div class="flex" v-if="isAdmin">
-            <router-link to="/product_baru">
-              <button
-                class="bg-green-600 text-white font-bold px-4 py-2 rounded shadow-md"
-                router
-              >
-                Tambah Produk
-              </button>
-            </router-link>
-            <router-link to="/update_stock">
-              <button
-                class="ml-2 bg-green-600 text-white font-bold px-4 py-2 rounded shadow-md"
-                router
-              >
-                Update Stock
-              </button>
-            </router-link>
-          </div>
-        </div>
-        <div class="flex w-full mt-4">
-          <input
-            type="text"
-            placeholder="Search Product..."
-            v-model="searchQuery"
-            class="px-4 py-2 w-full border border-gray-200 rounded-md"
-          />
-          <a href="/">
+      <div class="flex justify-end items-center">
+        <div class="flex" v-if="isAdmin">
+          <router-link to="/product_baru">
             <button
               class="bg-green-600 text-white font-bold px-4 py-2 rounded shadow-md"
+              router
             >
-              Search
+              Tambah Produk
             </button>
-          </a>
+          </router-link>
+          <router-link to="/update_stock">
+            <button
+              class="ml-2 bg-green-600 text-white font-bold px-4 py-2 rounded shadow-md"
+              router
+            >
+              Update Stock
+            </button>
+          </router-link>
         </div>
-      </form>
+      </div>
+      <div class="flex w-full mt-4">
+        <input
+          type="text"
+          placeholder="Search Product..."
+          v-model="searchQuery"
+          class="px-4 py-2 w-full border border-gray-200 rounded-md"
+        />
+        <!-- <a href="/"> -->
+        <button
+          class="bg-green-600 text-white font-bold px-4 py-2 rounded shadow-md"
+          @click="fetchData"
+        >
+          Search
+        </button>
+        <!-- </a> -->
+      </div>
       <br />
-      <table class="min-w-full rounded-lg overflow-hidden bg-white shadow-md">
+      <table
+        class="min-w-full rounded-lg overflow-hidden bg-white shadow-md"
+        v-if="data.length > 0"
+      >
         <thead>
           <tr class="bg-green-600 text-white">
             <th style="width: 2%" class="px-4 py-2">ID</th>
@@ -86,6 +63,7 @@ table {
             <th style="width: 3%" class="px-4 py-2">Time</th>
             <th style="width: 5%" class="px-4 py-2">Activity Detail</th>
             <th style="width: 4%" class="px-4 py-2">Stock</th>
+            <th style="width: 4%" class="px-4 py-2">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -126,6 +104,13 @@ table {
             <td class="px-4 py-2" data-label="Stock">
               {{ row.stock }}
             </td>
+            <td class="px-4 py-2" data-label="Stock">
+              <a :href="'/edit_product/' + row.id"
+                ><button class="bg-green-600 text-white rounded px-3">
+                  Edit
+                </button></a
+              >
+            </td>
           </tr>
         </tbody>
       </table>
@@ -136,47 +121,23 @@ table {
 <script setup>
 import HeaderComponent from "../components/HeaderComponent";
 import DrawerComponent from "../components/DrawerComponent";
-import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { ref } from "vue";
 import AuthService from "@/AuthService";
 var isAdmin = localStorage.getItem("akses") == "admin";
 const data = ref([]);
-const route = useRoute();
 const searchOption = ref("ref");
 const searchQuery = ref("");
-onMounted(async () => {
-  try {
-    var response;
-    if (route.params.by && route.params.query) {
-      response = await AuthService.searchProduct(
-        route.params.by,
-        route.params.query
-      );
-      searchOption.value = route.params.by;
-      searchQuery.value = route.params.query;
-    } else {
-      response = await AuthService.product();
-    }
-    data.value = response.data;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-});
 
-const submitForm = () => {
-  const radioButtonSelect = searchOption.value;
-  const query = searchQuery.value;
-  // Construct the form action path
-  if (query.length == 0) {
-    window.location.href = `/product`;
+async function fetchData() {
+  var response;
+  if (searchQuery.value) {
+    response = await AuthService.searchProduct(
+      searchOption.value,
+      searchQuery.value
+    );
   } else {
-    window.location.href = `/product/${radioButtonSelect}/${query}`;
+    response = await AuthService.product();
   }
-};
-
-// Computed property to construct the form action path
-const formAction = () => {
-  const radioButtonSelect = searchOption.value;
-  return `/product/${radioButtonSelect}/`;
-};
+  data.value = response.data;
+}
 </script>

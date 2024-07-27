@@ -28,6 +28,24 @@ class PenawaranController extends Controller
             ->get();
         return $data;
     }
+    public function search(string $by, string $query)
+    {
+        //
+        if ($by == "pembuat") {
+            $key = "internals.nama";
+        } else if ($by == "perusahaan") {
+            $key = "perusahaans.nama";
+        }
+        $data = Penawaran::join('internals', 'penawarans.internals_id', '=', 'internals.id')
+            ->join('teams as t', 'penawarans.teams_id', '=', 't.id')
+            ->join('customers as c', 'penawarans.customers_id', '=', 'c.id')
+            ->join("perusahaans", "perusahaans.id", '=', 'c.perusahaans_id')
+            ->select(DB::raw("DATE_FORMAT(tgl, '%W, %e %M %Y, %H:%i:%s') tgl"), "t.nama as Team", "internals.nama as Internal", "c.nama as Customer", "penawarans.uri as uri", "perusahaans.nama as Perusahaan")
+            ->where($key, 'like', "%$query%")
+            ->orderBy('penawarans.tgl', 'desc')
+            ->get();
+        return $data;
+    }
     public function customer()
     {
         //

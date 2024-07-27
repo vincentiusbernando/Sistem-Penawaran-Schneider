@@ -52,11 +52,27 @@
         </div>
       </div>
       <div
-        class="text-white py-2 flex justify-end"
+        class="py-2 flex justify-end"
         v-if="teams_id == head.teams_id || isAdmin"
       >
+        <div class="flex items-center">
+          <h1>Global Coef :</h1>
+          <input
+            class="px-3 py-2 border border-gray-300 rounded ml-2"
+            type="number"
+            step="0.01"
+            min="1"
+            v-model="global_coef"
+          />
+          <button
+            class="bg-green-600 text-white font-bold px-3 py-2 rounded shadow-md ml-2"
+            @click="setCoef"
+          >
+            Set
+          </button>
+        </div>
         <button
-          class="bg-green-600 text-white font-bold px-3 py-2 rounded shadow-md"
+          class="bg-green-600 text-white font-bold px-3 py-2 rounded shadow-md ml-2"
           @click="addRow"
         >
           Tambah Barang
@@ -85,7 +101,7 @@
               <th style="width: 6%" class="px-3 py-2">AD<br />(%)</th>
               <th style="width: 6%" class="px-3 py-2">CD<br />(%)</th>
               <th style="width: 8%" class="px-3 py-2">PL <br />Excel</th>
-              <th style="width: 6%" class="px-3 py-2">Coef</th>
+              <th style="width: 7%" class="px-3 py-2">Coef</th>
               <th style="width: 8%" class="px-3 py-2">
                 PL<br />After <br />Coef
               </th>
@@ -104,7 +120,10 @@
               :key="item.id"
               class="border-t border-gray-200"
             >
-              <td class="text-center" v-if="teams_id == head.teams_id || isAdmin">
+              <td
+                class="text-center"
+                v-if="teams_id == head.teams_id || isAdmin"
+              >
                 <button
                   class="bg-green-600 text-white rounded px-3"
                   @click="addRowBetween(index + 1)"
@@ -152,15 +171,15 @@
                   step="1"
                   min="1"
                   v-model="item.quantity"
-                  @input="updateRow(item)"
+                  @input="updateStock(item)"
                   :disabled="teams_id != head.teams_id && !isAdmin"
                 />
               </td>
-              <td class="px-3 py-2" data-label="Unit Price">
-                {{ item.unitPrice }}
+              <td class="px-3 py-2 text-end" data-label="Unit Price">
+                {{ formatRupiah(item.unitPrice) }}
               </td>
-              <td class="px-3 py-2" data-label="Total Price">
-                {{ item.totalPrice }}
+              <td class="px-3 py-2 text-end" data-label="Total Price">
+                {{ formatRupiah(item.totalPrice) }}
               </td>
               <td data-label="Delivery Time">
                 <input
@@ -170,11 +189,19 @@
                 />
               </td>
               <td data-label="Remarks">
-                <input
+                <!-- <input
                   class="px-3 py-2 border border-gray-300 rounded w-full"
                   v-model="item.remarks"
                   :disabled="teams_id != head.teams_id && !isAdmin"
-                />
+                /> -->
+                <textarea
+                  name=""
+                  id=""
+                  class="px-3 py-2 border border-gray-300 rounded w-full"
+                  style="height: 100%"
+                  v-model="item.remarks"
+                  :disabled="teams_id != head.teams_id && !isAdmin"
+                ></textarea>
               </td>
               <td data-label="Standard Discount">
                 <input
@@ -209,29 +236,27 @@
                   :disabled="teams_id != head.teams_id && !isAdmin"
                 />
               </td>
-              <td class="px-3 py-2" data-label="PL Excel">
-                {{ item.plExcel }}
+              <td class="px-3 py-2 text-end" data-label="PL Excel">
+                {{ formatRupiah(item.plExcel) }}
               </td>
               <td data-label="Coef">
                 <input
                   class="px-3 py-2 border border-gray-300 rounded w-full"
                   type="number"
-                  step="0.1"
+                  step="0.01"
                   min="0"
                   v-model="item.coef"
                   @input="updateRow(item)"
                   :disabled="teams_id != head.teams_id && !isAdmin"
                 />
               </td>
-              <td data-label="PL After Coef">
-                <input
-                  class="px-3 py-2 border border-gray-300 rounded w-full"
-                  v-model="item.plAfterCoef"
-                  readonly
-                  :disabled="teams_id != head.teams_id && !isAdmin"
-                />
+              <td class="px-3 py-2 text-end" data-label="PL After Coef">
+                {{ formatRupiah(item.plAfterCoef) }}
               </td>
-              <td class="text-center" v-if="teams_id == head.teams_id || isAdmin">
+              <td
+                class="text-center"
+                v-if="teams_id == head.teams_id || isAdmin"
+              >
                 <button
                   class="delete text-white rounded px-3 py-1"
                   @click="deleteRow(item.id)"
@@ -240,12 +265,80 @@
                 </button>
               </td>
             </tr>
+
+            <tr>
+              <td></td>
+              <td class="px-3 py-2">Sub Total:</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td class="px-3 py-2 text-end">{{ formatRupiah(subTotal) }}</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td class="px-3 py-2">PPN :</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td class="px-3 py-2 text-end">
+                {{ formatRupiah(subTotal * 0.11) }}
+              </td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td class="px-3 py-2">Total :</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td class="px-3 py-2 text-end">{{ formatRupiah(grandTotal) }}</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
           </tbody>
         </table>
       </div>
-      <div class="py-2 text-3xl flex justify-end">
-        <h1>Total: Rp. {{ grandTotal }}</h1>
-      </div>
+      <!-- <div class="py-2 text-2xl">
+        <br />
+        <div class="flex justify-between">
+          <h1>Sub Total:</h1>
+          <h1>{{ formatRupiah(subTotal) }}</h1>
+        </div>
+        <br />
+        <div class="flex justify-between">
+          <h1>PPN :</h1>
+          <h1>{{ formatRupiah(subTotal * 0.11) }}</h1>
+        </div>
+        <br />
+        <div class="flex justify-between">
+          <h1>Total:</h1>
+          <h1>{{ formatRupiah(grandTotal) }}</h1>
+        </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -262,7 +355,7 @@ import { onMounted } from "vue";
 import { useRoute } from "vue-router";
 
 const teams_id = localStorage.getItem("teams_id");
-const isAdmin=localStorage.getItem("akses") == "admin";
+const isAdmin = localStorage.getItem("akses") == "admin";
 const head = ref({});
 var data;
 const route = useRoute();
@@ -270,7 +363,9 @@ const searchTextArray = ref([]);
 const searchResults = ref([]);
 var standard_discount = 0;
 var additional_discount = 0;
+var subTotal = 0;
 var grandTotal = 0;
+var global_coef = 1;
 const $toast = useToast();
 const items = reactive([]);
 var tableReady = ref(false);
@@ -291,6 +386,9 @@ const fetchData = async () => {
     for (const item of data) {
       searchTextArray.value.push({ id: uuidv4(), text: item.ref });
       searchResults.value.push({ id: uuidv4(), results: [] });
+
+      const response2 = await AuthService.getStock(item.id);
+      var stock = response2.data;
       items.push({
         id: uuidv4(),
         dbID: item.id,
@@ -307,6 +405,7 @@ const fetchData = async () => {
         plAfterCoef: item.pl_aft_coef,
         unitPrice: item.unit_price,
         totalPrice: item.total_price,
+        stock: stock,
       });
     }
     tableReady.value = true;
@@ -360,12 +459,28 @@ async function selectItem(item, index) {
     items[index].description = data[0].description;
     items[index].plExcel = data[0].price;
     items[index].dbID = data[0].id;
-    updateRow(items[index]);
+
+    const response2 = await AuthService.getStock(data[0].id);
+    var stock = response2.data;
+    items[index].stock = stock;
+
+    updateStock(items[index]);
   } catch (error) {
     console.error("Error fetching data:", error);
   }
 }
 
+async function updateStock(item) {
+  console.log(item.stock);
+  if (item.stock) {
+    if (item.stock > item.quantity) {
+      item.remarks = "ready";
+    } else {
+      item.remarks = "ready qty stock";
+    }
+  }
+  updateRow(item);
+}
 function updateRow(item) {
   if (item.plExcel !== "" && item.coef !== "") {
     item.plAfterCoef = parseInt(item.plExcel * item.coef);
@@ -384,9 +499,16 @@ function updateRow(item) {
   }
 }
 function updateGrandTotal() {
-  grandTotal = 0;
+  subTotal = 0;
   for (let index = 0; index < items.length; index++) {
-    grandTotal += items[index].totalPrice;
+    subTotal += items[index].totalPrice;
+  }
+  grandTotal = subTotal * 1.11;
+}
+
+function setCoef() {
+  for (let index = 0; index < items.length; index++) {
+    items[index].coef = global_coef;
   }
 }
 
@@ -407,6 +529,7 @@ function addRow() {
     plAfterCoef: 0,
     unitPrice: "",
     totalPrice: "",
+    stock: null,
   });
   searchTextArray.value.push({ id: uuidv4(), text: "" });
   searchResults.value.push({ id: uuidv4(), results: [] });
@@ -428,6 +551,7 @@ function addRowBetween(index) {
     plAfterCoef: 0,
     unitPrice: "",
     totalPrice: "",
+    stock: null,
   });
   searchTextArray.value.splice(index, 0, { id: uuidv4(), text: "" });
   searchResults.value.splice(index, 0, { id: uuidv4(), results: [] });
@@ -463,5 +587,22 @@ async function saveModifiedRows() {
     console.error("Error submitting penawaran:", error);
     $toast.error(error, { position: "top" });
   }
+}
+function formatRupiah(value) {
+  if (!value) return "Rp 0";
+  value = Math.floor(value);
+  const numberString = value.toString().replace(/[^,\d]/g, "");
+  const split = numberString.split(",");
+  const sisa = split[0].length % 3;
+  let rupiah = split[0].substr(0, sisa);
+  const ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+  if (ribuan) {
+    const separator = sisa ? "." : "";
+    rupiah += separator + ribuan.join(".");
+  }
+
+  rupiah = split[1] !== undefined ? rupiah + "," + split[1] : rupiah;
+  return "Rp " + rupiah;
 }
 </script>

@@ -9,6 +9,7 @@ import DetailPage from "./Pages/DetailPage.vue";
 import InternalPage from "./Pages/InternalPage.vue";
 import Penawaran_baru from "./Pages/Penawaran_baru.vue";
 import ProductPage from "./Pages/ProductPage.vue";
+import ProductEdit from "./Pages/ProductEdit.vue";
 import SDPage from "./Pages/SDPage.vue";
 import Product_baru from "./Pages/Product_baru.vue";
 import Customer_baru from "./Pages/Customer_baru.vue";
@@ -51,8 +52,8 @@ const routes = [
     meta: { requiresInternalAuth: true },
   },
   {
-    path: "/product/:by/:query",
-    component: ProductPage,
+    path: "/edit_product/:id",
+    component: ProductEdit,
     meta: { requiresInternalAuth: true },
   },
   {

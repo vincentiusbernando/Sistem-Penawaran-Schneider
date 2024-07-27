@@ -28,6 +28,16 @@ class ProductController extends Controller
     {
         //
     }
+    public function stock(string $id)
+    {
+        //
+        $product = Product::find($id);
+        if ($product) {
+            return $product->stock;
+        } else {
+            return null;
+        }
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -91,14 +101,52 @@ class ProductController extends Controller
     public function edit(string $id)
     {
         //
+        $product = Product::find($id);
+        return $product;
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
         //
+        $token = $request->bearerToken();
+        $decodedToken = JWT::decode($token, new Key(env('JWT_SECRET'), 'HS256'));
+        if ($decodedToken->user->role != 'admin') {
+            abort(403, 'Unauthorized action.');
+        }
+        $token = $request->bearerToken();
+        $decodedToken = JWT::decode($token, new Key(env('JWT_SECRET'), 'HS256'));
+
+
+        $existingProduct = Product::where('ref', $request->input('ref'))->where('id', '<>', $request->input('id'))->first();
+        if ($existingProduct) {
+            return response()->json([
+                'result' => "error",
+                'message' => 'Ref telah digunakan'
+            ]);
+        }
+
+
+        $product = Product::find($request->input('id'));;
+        $product->ref = $request->input('ref');
+        $product->description = $request->input('description');
+        $product->price = $request->input('price');
+        $product->bu = $request->input('bu');
+        $product->activity = $request->input('activity');
+        $product->standard_discounts_mpg = $request->input('standard_discounts_mpg');
+        $product->type = $request->input('type');
+        $product->sub_type = $request->input('sub_type');
+        $product->time = $request->input('time');
+        $product->activity_detail = $request->input('activity_detail');
+        $product->stock = $request->input('stock');
+        $product->save();
+        return response()->json([
+            'result' => "success",
+            'message' => 'Product berhasil diupdate',
+            'data' => $product
+        ]);
     }
 
     /**
@@ -111,13 +159,13 @@ class ProductController extends Controller
     public function search_ref(Request $request)
     {
         $query = $request->input('search');
-        $items = Product::where('ref', 'like', "$query%")->get();
+        $items = Product::where('ref', 'like', "%$query%")->get();
         return $items;
     }
     public function search_product(string $by, string $query)
     {
         if ($by == "ref") {
-            $data = Product::where('ref', 'like', "$query%")->get();
+            $data = Product::where('ref', 'like', "%$query%")->get();
         } else if ($by == "desc") {
             $data = Product::where('description', 'like', "$query%")->get();
         }
